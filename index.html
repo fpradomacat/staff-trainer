@@ -62,6 +62,15 @@ textarea{min-height:52vh;resize:vertical}
 .lg label{display:block;margin:0 0 14px;color:#c9d6cc;font-size:14px}
 .lg input{display:block;width:100%;margin-top:4px;padding:14px;font:16px system-ui,sans-serif;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
 .err{color:#ffb4a9;min-height:24px;margin:0}
+.sc{background:var(--paper);color:var(--ink);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+.sc h3{margin:0;font-size:20px}.mu{color:var(--mu);font-size:14px;margin:2px 0 10px}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.tt{background:#ebe5d1;border-radius:10px;padding:8px 4px;text-align:center}
+.tt b{display:block;font-size:24px;line-height:1.1}.tt span{display:block;font-size:13px;color:#3c3b36}.tt small{display:block;font-size:11px;color:var(--mu)}
+.opt.sel{border-color:#f2c14e;background:#fff7dc}
+.lbl{font-size:13px;color:#c9d6cc;border:1px solid #f6f2e744;border-radius:99px;padding:3px 10px}
+.pc#admin{border-color:#8a8a80}
+.go:disabled{opacity:.45;cursor:default}
 button:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 @keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -135,11 +144,11 @@ let D=[
 "Malfy Limone G&T~bar~22~Malfy Limone gin;elderflower tonic;lemon;mint;anise",
 "Malfy Originale G&T~bar~22~Malfy Originale gin;Indian tonic;lemon;thyme",
 "Malfy Rosa G&T~bar~22~Malfy Rosa gin;Mediterranean tonic;grapefruit;rosemary",
-"Aperol Spritz~bar~18~Aperol;prosecco;soda",
-"Campari Spritz~bar~18~Campari;prosecco;soda",
-"Hugo Spritz~bar~18~elderflower liqueur;mint;prosecco",
-"Raspberry Spritz~bar~18~raspberry;prosecco;soda",
-"Dal Zotto Limoncello Spritz~bar~18~Dal Zotto prosecco;limoncello"
+"Aperol Spritz~spritz~18~Aperol;prosecco;soda",
+"Campari Spritz~spritz~18~Campari;prosecco;soda",
+"Hugo Spritz~spritz~18~elderflower liqueur;mint;prosecco",
+"Raspberry Spritz~spritz~18~raspberry;prosecco;soda",
+"Dal Zotto Limoncello Spritz~spritz~18~Dal Zotto prosecco;limoncello"
 ].map(s=>{const[n,c,p,i]=s.split("~");return{n,c,p:+p,i:i.split(";")}});
 
 const S=[["Lussuria","Lust"],["Accidia","Sloth"],["Avarizia","Greed"],["Ira","Wrath"],["Superbia","Pride"],["Invidia","Envy"],["Gola","Gluttony"]];
@@ -203,19 +212,19 @@ let H=[
 ["dessert","What cutlery do you leave for the Nutella Calzone?","A knife and fork","Round-handled spoons|Square-handled spoons|Chopsticks","A fried pizza dough pocket filled with Nutella, ideal to share."],
 ["dessert","Which liqueur is NOT an option on the Affogato al Liqueur?","Amaretto","Frangelico|Kahlua|Drambuie","Options: Frangelico, Baileys, Kahlua, Cointreau, Sambuca, Drambuie and Grand Marnier."],
 ["dessert","What is the Crema al Caffè?","Italian caffè cream folded into creamy ice cream, with espresso","A coffee-flavoured panna cotta|Tiramisu served in a glass|Espresso poured over vanilla gelato with liqueur","Pour the espresso and liqueur over it and you get the Affogato al Liqueur."],
-["dr","Which beer is alcohol-free and recommended on our list?","Menabrea 0.0%","Peroni 3.5%|Corona|Menabrea Biondi","Peroni 3.5% is the lighter Peroni, but it does contain alcohol."],
-["dr","Which bottled beer is a Japanese-style lager from Noosa?","Heads of Noosa","Coopers Pale Ale|Corona|Peroni Red","Heads of Noosa is the local beer on the bottle list."],
-["dr","Which bottled beer is a pale ale?","Coopers Pale Ale","Corona|Peroni Nastro Azzurro|Heads of Noosa","The others are lagers."],
+["beer","Which beer is alcohol-free and recommended on our list?","Menabrea 0.0%","Peroni 3.5%|Corona|Menabrea Biondi","Peroni 3.5% is the lighter Peroni, but it does contain alcohol."],
+["beer","Which bottled beer is a Japanese-style lager from Noosa?","Heads of Noosa","Coopers Pale Ale|Corona|Peroni Red","Heads of Noosa is the local beer on the bottle list."],
+["beer","Which bottled beer is a pale ale?","Coopers Pale Ale","Corona|Peroni Nastro Azzurro|Heads of Noosa","The others are lagers."],
 ["dr","What is a Chinotto?","An Italian cola-style drink","A blood orange soda|An elderflower tonic|A ginger beer","Aranciata Rossa is the Italian blood orange soda."],
-["dr","Which of these wines by the glass is the boldest, fullest-bodied red?","Shiraz (Barossa Valley)","Pinot Noir (Martinborough)|Pinot Nero (Alto Adige)|Chianti","Pinot Noir and Pinot Nero are the lightest, silkiest reds. Reds by the glass are served chilled."],
-["dr","Which red grape gives the lightest, silkiest red?","Pinot Noir / Pinot Nero","Shiraz|Sangiovese|Chianti","A general style guide: Chianti and Sangiovese sit in the middle, Shiraz is the boldest."],
-["dr","Which white by the glass is zesty, fresh and herbal?","Sauvignon Blanc (Marlborough)","Chardonnay|Pinot Grigio|Soave","Chardonnay is the fuller-bodied white. Pinot Grigio and Soave are light and crisp."],
-["dr","Which two whites by the glass come from Veneto?","Pinot Grigio and Soave","Riesling and Chardonnay|Sauvignon Blanc and Riesling|Chardonnay and Soave","Both are DOC wines. Prosecco is also from Veneto."],
-["dr","Which reds by the glass come from Tuscany?","Chianti and Sangiovese","Pinot Nero and Shiraz|Pinot Noir and Chianti|Sangiovese and Shiraz","Pinot Nero is from Alto Adige."],
-["dr","What time is Aperitivo Hour, and how much are the spritzes?","2pm to 5pm daily, $15","3pm to 6pm daily, $15|2pm to 5pm daily, $18|2pm to 5pm on weekends, $15","$18 outside of Aperitivo Hour. Five spritzes: Aperol, Campari, Hugo, Raspberry and Dal Zotto Limoncello."],
-["dr","Which spritz is made with elderflower liqueur, mint and prosecco?","Hugo Spritz","Aperol Spritz|Raspberry Spritz|Campari Spritz","Aperol, Campari and Raspberry spritzes are made with prosecco and soda."],
-["dr","Which spritz is the most bitter?","Campari Spritz","Hugo Spritz|Raspberry Spritz|Dal Zotto Limoncello Spritz","Aperol is the sweeter, softer bitter-orange option."],
-["dr","Which spritz uses the signature Dal Zotto prosecco and limoncello?","Dal Zotto Limoncello Spritz","Hugo Spritz|Aperol Spritz|Raspberry Spritz","Citrus-packed limoncello."],
+["wine","Which of these wines by the glass is the boldest, fullest-bodied red?","Shiraz (Barossa Valley)","Pinot Noir (Martinborough)|Pinot Nero (Alto Adige)|Chianti","Pinot Noir and Pinot Nero are the lightest, silkiest reds. Reds by the glass are served chilled."],
+["wine","Which red grape gives the lightest, silkiest red?","Pinot Noir / Pinot Nero","Shiraz|Sangiovese|Chianti","A general style guide: Chianti and Sangiovese sit in the middle, Shiraz is the boldest."],
+["wine","Which white by the glass is zesty, fresh and herbal?","Sauvignon Blanc (Marlborough)","Chardonnay|Pinot Grigio|Soave","Chardonnay is the fuller-bodied white. Pinot Grigio and Soave are light and crisp."],
+["wine","Which two whites by the glass come from Veneto?","Pinot Grigio and Soave","Riesling and Chardonnay|Sauvignon Blanc and Riesling|Chardonnay and Soave","Both are DOC wines. Prosecco is also from Veneto."],
+["wine","Which reds by the glass come from Tuscany?","Chianti and Sangiovese","Pinot Nero and Shiraz|Pinot Noir and Chianti|Sangiovese and Shiraz","Pinot Nero is from Alto Adige."],
+["spritz","What time is Aperitivo Hour, and how much are the spritzes?","2pm to 5pm daily, $15","3pm to 6pm daily, $15|2pm to 5pm daily, $18|2pm to 5pm on weekends, $15","$18 outside of Aperitivo Hour. Five spritzes: Aperol, Campari, Hugo, Raspberry and Dal Zotto Limoncello."],
+["spritz","Which spritz is made with elderflower liqueur, mint and prosecco?","Hugo Spritz","Aperol Spritz|Raspberry Spritz|Campari Spritz","Aperol, Campari and Raspberry spritzes are made with prosecco and soda."],
+["spritz","Which spritz is the most bitter?","Campari Spritz","Hugo Spritz|Raspberry Spritz|Dal Zotto Limoncello Spritz","Aperol is the sweeter, softer bitter-orange option."],
+["spritz","Which spritz uses the signature Dal Zotto prosecco and limoncello?","Dal Zotto Limoncello Spritz","Hugo Spritz|Aperol Spritz|Raspberry Spritz","Citrus-packed limoncello."],
 ["flow","A guest says they don't have a booking. What do you do in the system?","Add the walk-in","Mark them as Sitted and nothing else|Create a booking for tomorrow|Ask them to wait outside","Then walk them to their table with the drinks menus."],
 ["flow","A table chooses sparkling water. What else do you do?","Charge it in the system","Nothing, it's complimentary|Tell the kitchen|Offer a free refill of wine","Fill the bottle with sparkling water and pour it into their glasses."],
 ["flow","A table of 4 has asked for water. What do you bring?","A filled bottle plus a second bottle without a cap to refill from","One capped bottle|A jug from the bar|Only glasses of water","With more than 2 guests, bring the second bottle so you can refill directly."],
@@ -232,7 +241,39 @@ let H=[
 ["map","Which tables are in the Bar area?","41, 42 and 46","41, 42 and 43|40, 41 and 42|42, 44 and 46","41 and 42 seat 4, 46 seats 2."],
 ["map","Which Mare tables seat 2 people?","21, 31, 32 and 33","21, 22, 31 and 32|22, 23, 24 and 31|23, 24, 32 and 33","22, 23 and 24 seat 4."],
 ["map","Which Inside tables seat 4 or more?","37, 38 and 39","34, 35 and 36|35, 37 and 39|36, 37 and 38","34, 35 and 36 seat 2. Table 39 seats 6."],
-["map","Which Piazza tables seat 2 people?","4 and 10","1 and 2|7 and 8|9 and 10","The other Piazza tables (1, 2, 7, 8, 9) seat 4."]
+["map","Which Piazza tables seat 2 people?","4 and 10","1 and 2|7 and 8|9 and 10","The other Piazza tables (1, 2, 7, 8, 9) seat 4."],
+["wine","The Champagne on the glass list is served as what?","A 375ml bottle ($82)","A glass ($22)|A 750ml bottle ($160)|A 200ml split ($40)","Louis Roederer, from Reims, France. The 750ml bottle is $160 on the bottle list."],
+["wine","Which sparkling by the glass comes from King Valley, Victoria?","Dal Zotto La Nebbia Sparkling Nebbiolo/Rosato","Cantina del Garda Prosecco|Louis Roederer Champagne|Marotti Campi Rosato","The Prosecco on the glass list is from Veneto, Italy."],
+["wine","Which still wine on the glass list is the rosé?","Marotti Campi Rosato (Marche, Italy)","Corte Adami Soave|Kimi Sauvignon Blanc|Polini & Rossetti Chianti","Rosato is Italian for rosé."],
+["wine","Which white by the glass is from Marlborough, NZ?","Kimi Sauvignon Blanc","Leeuwin Riesling|Simon Tolley Chardonnay|Corte Adami Soave","Sauvignon Blanc is the zesty, herbal white on our list."],
+["wine","Where is the Leeuwin 'Art Series' Riesling from?","Margaret River, WA","Barossa Valley, SA|Marlborough, NZ|Adelaide Hills, SA","Riesling is crisp and citrusy."],
+["wine","Which grape is the Simon Tolley wine from Adelaide Hills?","Chardonnay","Sauvignon Blanc|Riesling|Pinot Grigio","Chardonnay is the fuller-bodied white on our list."],
+["wine","Which red by the glass is from the Barossa Valley?","Two Hands 'Gnarly Dudes' Shiraz","Craggy Range Pinot Noir|Polini & Rossetti Chianti|Castelfeder Pinot Nero","Shiraz is the boldest red on the glass list."],
+["wine","How are the reds by the glass served?","Chilled","At room temperature|Warmed|Over ice","The list says reds by the glass are served chilled."],
+["wine","What is Pinot Nero?","The Italian name for Pinot Noir","A Sicilian white|A type of prosecco|A Tuscan Sangiovese","Ours is Castelfeder 'Mont Mes' from Alto Adige, Italy."],
+["beer","Which of these are our Italian beers?","Peroni Nastro Azzurro, Peroni Red, Peroni 3.5% and Menabrea Biondi","Peroni Red, Corona, Coopers Pale Ale and Menabrea 0.0%|Heads of Noosa, Coopers Pale Ale, Corona and Peroni 3.5%|Menabrea Biondi, Corona, Heads of Noosa and Peroni Red","Menabrea 0.0% is also Italian but is listed with the bottles."],
+["beer","Which Italian beer is the lower-strength Peroni?","Peroni 3.5%","Peroni Red|Peroni Nastro Azzurro|Menabrea Biondi","The 3.5% is the lighter option in the Peroni range."],
+["beer","Which Italian beer costs $14 instead of $13?","Menabrea Biondi","Peroni Nastro Azzurro|Peroni Red|Peroni 3.5%","The three Peronis are $13."],
+["beer","Which of these beers is NOT Italian?","Corona","Peroni Red|Menabrea Biondi|Peroni Nastro Azzurro","Corona is on the bottle list with Heads of Noosa, Coopers and Menabrea 0.0%."],
+["beer","How many beers are in the Italian beers list?","4","2|3|5","Peroni Nastro Azzurro, Peroni Red, Peroni 3.5% and Menabrea Biondi."],
+["beer","What is in the Cider / Ginger beer section?","Cheeky Tiki Apple Cider and Matso's Ginger Beer","Heads of Noosa and Coopers|Peroni Red and Corona|Chinotto and Aranciata Rossa","Both are $15."],
+["dr","What is the Aranciata Rossa?","An Italian blood orange soda","An Italian cola-style drink|A ginger beer|A tonic water","The Chinotto is the Italian cola-style drink. Both are $9."],
+["dr","Which Fever-Tree tonics do we have?","Mediterranean, Indian and Elderflower","Classic, Light and Lemon|Indian, Pink and Ginger|Mediterranean, Cola and Elderflower","Fever-Tree tonics are used in our gin and tonics."],
+["phr","How do you describe the Tartare di Manzo?","Finely chopped raw beef, seasoned and tossed with the ingredients on the menu","Slow-cooked beef in a rich ragu|Thinly sliced poached beef with tuna sauce|Grilled beef, served rare","Capers, shallot, fresh herbs, hazelnuts and a sweet-salty herb dressing, with a tapioca crisp."],
+["phr","How do you describe the Vitello Tonnato?","A classic cold Italian dish from Piedmont","A hot veal stew from Tuscany|A raw beef dish from Lombardy|A grilled veal cutlet from Sicily","Thinly sliced poached veal with tonnato aioli."],
+["phr","What do you say before serving a dish with 'nduja, like the Risotto del Bosco?","Ask if they don't mind a little spice, as the 'nduja is spicy","Tell them it's mild|Offer chilli oil|Nothing, it's a standard dish","'Nduja is a spicy, spreadable pork salumi from Calabria."],
+["phr","How do you pronounce 'nduja?","en-doo-ya","nuh-dooj|en-dew-ja|in-doo-ga","It is on the Ira pizza, the Cozze and the Zeppolina."],
+["phr","What do you tell guests about the prawns in the Risotto Terra e Mare?","We dice the prawns and cook them in the risotto to extract as much flavour as possible","The prawns are grilled and placed on top|The prawns are fried in tempura|The prawns are served raw on the side","It is made with truffle butter and pecorino too."],
+["phr","How can the Risotto Terra e Mare be made vegetarian?","Swap the prawns for porcini mushrooms","Remove the truffle butter|Swap the prawns for pumpkin|Swap the prawns for kale","Always confirm with the kitchen."],
+["phr","How do you explain ricotta salata (Pappardelle al Maiale)?","Pressed and salted ricotta that has had the moisture taken out","A fresh, creamy ricotta|A smoked cheese|Ricotta mixed with spinach","It is also on the Risotto alla Zucca."],
+["phr","A guest asks if the Fazzoletti al Granchio is creamy. What do you say?","We use cream to bring the dish together, but it is not a super creamy dish","Very rich and creamy|There is no cream in it|It is a cold dish","Silk handkerchief pasta with Fraser Isle spanner crab, cherry tomatoes, garlic and chilli."],
+["phr","How many pieces come in the Zeppolina, and how do you explain it?","2 pieces, one of each filling: little fried dough pastries","3 pieces, all the same|4 pieces, all the same|2 pieces, both the same","Crispy fried pizza pockets. Fillings: fior di latte & ham, and 'nduja, gorgonzola & Italian sausage."],
+["phr","How do you explain the Olive Ripiene, and how many come per serve?","Stuffed olives, 4 per serve","Stuffed olives, 2 per serve|Fried olive tapenade, 4 per serve|Stuffed olives, 6 per serve","Crumbed Sicilian olives stuffed with asiago, wrapped in Italian sausage."],
+["phr","How many Arancini come per serve, and what do you suggest when sharing?","3 per serve, ask if they'd like one extra","2 per serve, suggest a second dish|4 per serve, split them in half|3 per serve, nothing to suggest","Rice balls with roasted eggplant. The pea & scamorza arancini are also x3."],
+["phr","How many Fiori di Zucca come per serve, and what do you suggest when sharing?","2 per serve, ask if they'd like one extra","3 per serve, nothing to suggest|2 per serve, suggest a second serve|4 per serve, split them","Tempura zucchini flowers with lemon ricotta."],
+["phr","How do you describe the Salumi & Formaggi wooden board?","Cured meats and cheese, served with focaccia","Fresh cheeses on a bed of rocket|Cured meats with olives only|Cheese and honey only","Porchetta, mortadella, cacciatore piccante, taleggio, parmigiano reggiano and honey."],
+["phr","How do you describe the Prosciutto & Burrata wooden board?","Prosciutto and burrata on a bed of rocket, served with fresh focaccia","Cured meats and cheese, served with focaccia|Burrata with tomato and basil|Prosciutto with melon and rocket","You can offer the truffle burrata upgrade."],
+["phr","Into how many pieces is the focaccia cut?","8 pieces","4 pieces|6 pieces|10 pieces","All our focaccias are cut into 8 pieces."]
 ];
 
 let T=[["Focaccia","a flat oven-baked Italian bread"],["'Nduja","a spicy, spreadable pork salumi from Calabria"],["Taleggio","a semi-soft, washed-rind cheese with a strong aroma and a mild fruity tang"],["Burrata","a mozzarella shell filled with stracciatella and cream"],["Asiago","a cow's milk cheese, smooth when fresh and crumbly when aged"],["Mascarpone","an Italian cream cheese made with lemon juice, vinegar or citric acid"],["Tortelli","filled pasta from Lombardy, Emilia-Romagna and Tuscany"],["EVO","extra virgin olive oil"],["Fior di latte","a southern Italian cow's milk cheese made by the pasta filata method"],["Parmigiano Reggiano","a hard, granular Italian cheese (often called Parmesan)"],["Pancetta","Italian bacon: salt-cured pork belly"],["Stracciatella","a soft cheese of cream and shreds of mozzarella"],["Scamorza","a pear-shaped spun-paste cow's milk cheese, like a firm, dry mozzarella"],["Porchetta","seasoned, roasted pork loin from Lazio"],["Pangrattato","crumbled bread, sometimes seasoned"],["Mortadella","cured pork from Bologna"]];
@@ -246,8 +287,13 @@ let FLOW=["Ask if they have a booking","Check the booking in the system","Mark t
 let FL={"Mare":[[21,2],[22,4],[23,4],[24,4],[31,2],[32,2],[33,2]],"Inside":[[34,2],[35,2],[36,2],[37,4],[38,4],[39,6]],"Piazza":[[1,4],[2,4],[4,2],[7,4],[8,4],[9,4],[10,2]],"Bar area":[[41,4],[42,4],[46,2]]};
 FL["New Zealand"]=[[5,6],[11,2],...FL.Inside];
 
+const W=[["Cantina Del Garda Pinot Grigio D.O.C","Veneto, Italy","Clean, bone-dry and light, with crunchy green pear and a hint of mineral freshness.","The perfect Italian white: clean, simple, and exactly what you want with the lighter cicchetti.","the lighter cicchetti"],
+["Brigaldara Soave D.O.C","Veneto, Italy","Delicate white flowers, almond, and a crisp, light, easy body.","The classic, effortless white of Veneto. Simple, dry, and incredibly refreshing: the ultimate Italian patio wine.","a lazy lunch on the patio"],
+["Castelfeder Mont Mes Pinot Nero","Alto Adige, Italy","Delicate red cherry, fine-grained tannins, and a savoury earthiness from the Italian Alps.","This is Italian Pinot Noir! It's light, fragrant, and excellent with vegetable or white-sauce dishes.","vegetable or white-sauce dishes"],
+["Manfredi Governo di Toscana Sangiovese I.G.T","Tuscany, Italy","A rich, structured red with dark plum, earthiness, and a touch of raisin from the traditional 'Governo' method.","Made using an ancient Tuscan method! This gives it amazing richness and depth, perfect with a slow-cooked ragu.","a slow-cooked ragu"],
+["Two Hands Gnarly Dudes Shiraz","Barossa Valley, SA","Full-bodied, generous and spicy, with rich plum, dark chocolate and a smooth finish.","Big, bold, and unapologetic! A rich Aussie Shiraz for when they're craving intense flavour and red meat.","red meat"]];
 /* ---------- Engine ---------- */
-const CATS={all:"Everything",pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",meat:"Meat or not?",dessert:"Desserts",offer:"What to offer",cheese:"Cheeses",ital:"Italian words",set:"Set menus",up:"Upgrades",gf:"Gluten free",kids:"Kids",flow:"Table service",map:"Tables & sections",dr:"Drinks",bar:"Cocktails & spritzes",mise:"Mise en place"};
+const CATS={all:"Everything",pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",meat:"Meat or not?",dessert:"Desserts",offer:"What to offer",cheese:"Cheeses",ital:"Italian words",set:"Set menus",up:"Upgrades",gf:"Gluten free",kids:"Kids",flow:"Table service",map:"Tables & sections",dr:"Soft drinks",beer:"Beers",bar:"Cocktails",spritz:"Spritzes",wine:"Wines",wsell:"Wine cheatsheet",phr:"Menu cheatsheet",mise:"Mise en place"};
 const $=s=>document.querySelector(s),R=a=>a[Math.random()*a.length|0],sh=a=>[...a].sort(()=>Math.random()-.5),pk=(a,n)=>sh(a).slice(0,n);
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let cat="all",qs=[],i=0,score=0,streak=0,miss=[];
@@ -255,6 +301,10 @@ const app=$("#app");
 
 let AC,snd=store.get("snd")!="off";
 function beep(ok){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;(ok?[[660,0],[880,.12]]:[[220,0],[165,.16]]).forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.16,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.26);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+.28)})}catch(e){}}
+let CB;
+function tick(){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=="suspended")AC.resume();
+ if(!CB){const n=AC.sampleRate*.03|0;CB=AC.createBuffer(1,n,AC.sampleRate);const d=CB.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,6)}
+ const o=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();o.buffer=CB;f.type="bandpass";f.frequency.value=2400;f.Q.value=.8;g.gain.value=.6;o.connect(f);f.connect(g);g.connect(AC.destination);o.start()}catch(e){}}
 function gen(cat){
  const Q=[],ds=D.filter(d=>cat=="all"||d.c==cat);
  ds.forEach(d=>{
@@ -265,7 +315,7 @@ function gen(cat){
    Q.push({q:`Which of these is an ingredient on the ${d.n}?`,a:R(d.i),w:pk(pool,3),e});
    if(d.i.length>3)Q.push({q:`Which ingredient does NOT belong on the ${d.n}?`,a:R(pool),w:pk(d.i,3),e});
    const t=pk(d.i,2),o=same.filter(x=>x!=d&&!t.every(y=>x.i.includes(y)));
-   if(o.length>2)Q.push({q:`Which ${({pizza:"pizza",pasta:"pasta or risotto",ante:"starter",mains:"dish",dessert:"dessert",bar:"drink"})[d.c]} combines ${t[0]} and ${t[1]}?`,a:d.n,w:pk(o,3).map(x=>x.n),e});
+   if(o.length>2)Q.push({q:`Which ${({pizza:"pizza",pasta:"pasta or risotto",ante:"starter",mains:"dish",dessert:"dessert",bar:"drink",spritz:"spritz"})[d.c]} combines ${t[0]} and ${t[1]}?`,a:d.n,w:pk(o,3).map(x=>x.n),e});
   }
   const pr=[...new Set(same.map(x=>x.p))].filter(p=>p&&p!=d.p);
   if(d.p&&pr.length>2&&Math.random()<.3)Q.push({q:`How much is the ${d.n}?`,a:"$"+d.p,w:pk(pr,3).map(p=>"$"+p),e:`$${d.p}. ${e}`});
@@ -273,13 +323,18 @@ function gen(cat){
  if(cat=="all"||cat=="pizza")pk(S,3).forEach(s=>Q.push({q:`Which of the Seven Sins pizzas is the sin of ${s[1]}?`,a:s[0],w:pk(S.filter(x=>x!=s),3).map(x=>x[0]),e:`${s[0]} means ${s[1]}. Recipe: ${D.find(d=>d.n==s[0]).i.join(", ")}.`}));
  const smp=(a,n)=>cat=="all"?pk(a,n):a;
  if(cat=="all"||cat=="meat"){
-  const FD=D.filter(d=>d.c!="dessert"&&d.c!="bar"),mt=d=>MR.test(d.i.join(" ")),M=FD.filter(mt),V=FD.filter(d=>!mt(d)),n="Based on the listed ingredients only. Always confirm with the kitchen for allergies or diets.";
+  const FD=D.filter(d=>d.c!="dessert"&&d.c!="bar"&&d.c!="spritz"),mt=d=>MR.test(d.i.join(" ")),M=FD.filter(mt),V=FD.filter(d=>!mt(d)),n="Based on the listed ingredients only. Always confirm with the kitchen for allergies or diets.";
   for(let k=0;k<(cat=="all"?2:5);k++){const v=R(V),m=R(M);
    Q.push({q:"Which of these has no meat or fish in its listed ingredients?",a:v.n,w:pk(M,3).map(x=>x.n),e:`${v.n}: ${v.i.join(", ")}. ${n}`});
    Q.push({q:"Which of these contains meat or fish?",a:m.n,w:pk(V,3).map(x=>x.n),e:`${m.n}: ${m.i.join(", ")}. ${n}`});}
  }
  if(cat=="all"||cat=="ital")smp(T,4).forEach(([t,df])=>Q.push({q:`What is ${t}?`,a:df,w:pk(T.filter(x=>x[0]!=t).map(x=>x[1]),3),e:`${t} is ${df}.`}));
  if(cat=="all"||cat=="offer")smp(O,3).forEach(([n,a])=>Q.push({q:`What do you offer with the ${n}?`,a,w:pk(["Pepper","Parmigiano","Chilli oil","Nothing to offer"].filter(x=>x!=a),3),e:`${a}. Say: "Would you like some... let me know when to stop."`}));
+ if(cat=="wsell")W.forEach((w,k)=>{const nm=W.map(x=>x[0]),on=nm.filter((_,j)=>j!=k),e=`${w[0]} (${w[1]}). Taste: ${w[2]} Pitch: ${w[3]}`;
+  Q.push({q:`Which wine is described like this: "${w[2]}"`,a:w[0],w:pk(on,3),e});
+  Q.push({q:`How would you sell the ${w[0]}?`,a:w[3],w:pk(W.filter((_,j)=>j!=k).map(x=>x[3]),3),e});
+  Q.push({q:`Which wine would you suggest with ${w[4]}?`,a:w[0],w:pk(on,3),e});
+ });
  if(cat=="mise"){const M=MISE[prof]||{},gs=Object.keys(M),A=Object.values(M).flat();
   if(gs.length>3)gs.forEach(g=>pk(M[g],3).forEach(t=>Q.push({q:`Under which mise en place area is "${t}"?`,a:g,w:pk(gs.filter(x=>x!=g),3),e:`${g}. Also in this area: ${pk(M[g].filter(x=>x!=t),2).join("; ")}.`})));
   const F=["Chat with friends at the bar","Leave early without telling anyone","Skip the cleaning if it's quiet","Take a long break during service"];
@@ -306,10 +361,10 @@ function gen(cat){
 
 function main(){
  const au=store.get("auth")=="1";
- app.innerHTML=`<div class="bar2"><button class="lnk" id="snd">Sound: ${snd?"on":"off"}</button><button class="sm" id="${au?"logout":"login"}">${au?"Logout":"Login"}</button></div>
+ app.innerHTML=`<div class="bar2"><button class="lnk" id="snd">Sound: ${snd?"on":"off"}</button>${au?`<span class="lbl">Admin</span>`:""}<button class="sm" id="${au?"logout":"login"}">${au?"Logout":"Login"}</button></div>
  <div class="flag"></div><h1 class="t ct">250 Grammi</h1><p class="sub ct">Team Academy</p>
- <div class="pf">${Object.entries(PROF).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
- ${au?`<button class="ghost" id="admin">Admin</button>`:""}`;
+ <div class="pf">${au?`<button class="pc" id="admin"><b class="t">Admin</b><span>Manage questions, dishes, tables and mise en place</span></button>`:""}${Object.entries(PROF).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
+ <button class="ghost" id="guide">Floor guide</button>`;
 }
 function login(msg){
  app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back">&#8592;</button></div>
@@ -328,12 +383,16 @@ function home(){
  app.innerHTML=`<div class="flag"></div><div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h1 class="t" style="font-size:30px;margin:0">${P.n}</h1></div>
  <h2>Trivia</h2><p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
  <div class="chips">${["all",...P.t].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${CATS[k]}${store.get("b_"+prof+k)?` <small>best ${store.get("b_"+prof+k)}</small>`:""}</button>`).join("")}</div>
- <button class="go" id="go">Start quiz</button>${prof=="foh"?`<button class="ghost" id="guide">Floor guide</button>`:""}`;
+ <button class="go" id="go">Start quiz</button>`;
 }
-function guide(){app.innerHTML=`<div class="flag"></div><h2 class="t">Floor guide</h2><p class="sub">Table number (people)</p>`+Object.entries(FL).map(([c,t])=>`<div class="rv"><b>${c}</b><span>${t.map(x=>x[0]+" ("+x[1]+")").join(",  ")}</span></div>`).join("")+`<button class="go" id="home">Back</button>`}
-const SEC={pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",dessert:"Desserts",bar:"Cocktails & drinks"};
-const PROF={foh:{n:"Front of House",d:"Menu, service flow, floor, drinks and mise en place",t:["pizza","pasta","ante","mains","meat","dessert","offer","cheese","ital","set","up","gf","kids","flow","map","dr","mise"]},
-bar:{n:"Bar",d:"Cocktails, spritzes, drinks and mise en place",t:["bar","dr","dessert","ital","mise"]},
+function guide(){
+ const sc=Object.keys(FL),own=t=>sc.filter(c=>FL[c].some(x=>x[0]==t));
+ app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back">&#8592;</button><h1 class="t" style="font-size:28px;margin:0">Floor guide</h1></div>
+ <p class="sub">Each tile shows the table number and how many people it seats.</p>`+sc.map(c=>`<div class="sc"><h3 class="t">${c}</h3><p class="mu">${FL[c].length} tables, ${FL[c].reduce((a,x)=>a+x[1],0)} seats</p><div class="tg">${FL[c].slice().sort((x,y)=>x[0]-y[0]).map(([t,n])=>`<div class="tt"><b class="t">${t}</b><span>${n} people</span>${own(t).length>1?`<small>also ${own(t).filter(x=>x!=c).join(", ")}</small>`:""}</div>`).join("")}</div></div>`).join("");
+}
+const SEC={pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",dessert:"Desserts",bar:"Cocktails",spritz:"Spritzes"};
+const PROF={foh:{n:"Front of House",d:"Menu, service flow, floor, drinks and mise en place",t:["pizza","pasta","ante","mains","meat","dessert","offer","cheese","ital","set","up","gf","kids","flow","map","phr","wine","wsell","spritz","beer","dr","mise"]},
+bar:{n:"Bar",d:"Cocktails, spritzes, wines, beers and mise en place",t:["bar","spritz","wine","wsell","beer","dr","dessert","ital","mise"]},
 kitchen:{n:"Kitchen",d:"Menu, ingredients, allergens and mise en place",t:["pizza","pasta","ante","mains","meat","dessert","cheese","ital","gf","mise"]}};
 let prof="foh";
 let PUB=null;
@@ -344,7 +403,45 @@ async function init(){
  if(!PUB)try{const r=await fetch("data.json",{cache:"no-cache"});if(r.ok)PUB=await r.json()}catch(e){}
  if(PUB)setDB(PUB);
  try{const l=store.get("g250db");if(l)setDB(JSON.parse(l))}catch(e){}
- main();
+ addEventListener("hashchange",route);
+ route();
+}
+function route(){location.hash.startsWith("#/test")?cand():main()}
+const CT=["pizza","pasta","ante","mains","meat","cheese","ital","gf","flow","offer","map","phr"],CN=16;
+let cd={};
+function cand(){cd={};
+ app.innerHTML=`<div class="flag"></div><h1 class="t ct">250 Grammi</h1><p class="sub ct">Candidate test</p>
+ <div class="lg"><p class="sub">Welcome! This short test has ${CN} multiple-choice questions about food and service. You won't see the results as you go, and it takes about 10 minutes.</p>
+ <label>Full name<input id="cn" autocomplete="name"></label><label>Email<input id="ce" type="email" autocomplete="email"></label>
+ <label>Position<select id="cp"><option>Waiter / Waitress</option><option>Bartender</option><option>Kitchen</option><option>Other</option></select></label>
+ <p class="err" id="cerr"></p><button class="go" id="cstart">Start test</button></div>`;
+}
+function cstart(){
+ const n=$("#cn").value.trim(),m=$("#ce").value.trim();
+ if(!n||!/^\S+@\S+\.\S+$/.test(m)){$("#cerr").textContent="Please enter your name and a valid email.";return}
+ cd={n,m,r:$("#cp").value,ans:[],i:0};
+ cd.q=sh(CT.flatMap(t=>pk(gen(t),2))).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,CN);
+ cshow();
+}
+function cshow(){
+ const q=cd.q[cd.i],last=cd.i+1==cd.q.length;
+ app.innerHTML=`<div class="top"><div class="bar"><i style="width:${cd.i/cd.q.length*100}%"></i></div><b>${cd.i+1}/${cd.q.length}</b></div>
+ <h3 class="q">${q.q}</h3><div>${q.o.map((o,k)=>`<button class="opt" data-ck="${k}"><span>${"ABCD"[k]}</span>${o}</button>`).join("")}</div>
+ <button class="go" id="cnext" disabled>${last?"Submit":"Next"}</button>`;
+}
+function csel(k){cd.ans[cd.i]=k;document.querySelectorAll(".opt").forEach((x,j)=>x.classList.toggle("sel",j==k));$("#cnext").disabled=false}
+function cnext(){
+ if(cd.ans[cd.i]==null)return;
+ if(++cd.i<cd.q.length)return cshow();
+ app.innerHTML=`<div class="res"><div class="big">&#9993;</div><h2 class="t">Submitting your answers...</h2><p class="sub">Please keep this page open.</p></div>`;
+ setTimeout(cdone,1500);
+}
+function cdone(){
+ const sc=cd.q.filter((q,k)=>q.o[cd.ans[k]]==q.a).length,adm=store.get("auth")=="1";
+ app.innerHTML=`<div class="flag"></div><div class="res"><div class="big">&#127881;</div><h2 class="t">Thank you, ${ESC(cd.n.split(" ")[0])}!</h2>
+ <p class="sub">Your answers have been submitted. We will review them and get back to you by email soon.</p></div>
+ ${adm?`<div class="rv"><b>Result (visible to admins only)</b><span>${sc} / ${cd.q.length}</span><small>${ESC(cd.n)}, ${ESC(cd.m)}, ${ESC(cd.r)}</small></div>`+cd.q.map((q,k)=>{const ok=q.o[cd.ans[k]]==q.a;return `<div class="rv"><b>${ok?"Correct":"Wrong"}: ${q.q}</b><span>${q.a}</span>${ok?"":`<small>Their answer: ${q.o[cd.ans[k]]}</small>`}</div>`}).join(""):""}`;
+ scrollTo(0,0);
 }
 function start(){
  const raw=cat=="all"?PROF[prof].t.flatMap(t=>pk(gen(t),3)):gen(cat);
@@ -361,7 +458,7 @@ const ED={
  q:{sel:()=>opt(Object.entries(CATS).filter(([k])=>k!="all"),ed.q),hint:"One question per line: question | correct answer | wrong 1 | wrong 2 | wrong 3 | explanation. Rows pasted from Google Sheets also work (Auto rows are skipped).",
   get:()=>H.filter(h=>h[0]==ed.q).map(h=>[h[1],h[2],...h[3].split("|").concat(["","",""]).slice(0,3),h[4]].join(" | ")),
   set:L=>{const r=[];L.forEach(l=>{let c=cl(l);if(c[1]=="Auto")return;if(c.length>=8)c=c.slice(2);if(c.length>2)r.push([ed.q,c[0],c[1],c.slice(2,5).filter(Boolean).join("|"),c[5]||""])});H=H.filter(h=>h[0]!=ed.q).concat(r);return r.length+" questions saved."}},
- d:{hint:"One dish per line: name | section (Pizza, Pasta & Risotto, Starters, Mains & Sides, Desserts, Cocktails & drinks) | price (0 if none) | ingredient; ingredient; ...",
+ d:{hint:"One dish per line: name | section (Pizza, Pasta & Risotto, Starters, Mains & Sides, Desserts, Cocktails, Spritzes) | price (0 if none) | ingredient; ingredient; ...",
   get:()=>D.map(d=>[d.n,SEC[d.c],d.p,d.i.join("; ")].join(" | ")),
   set:L=>{const o=[],bad=[];L.forEach(l=>{const c=cl(l),k=Object.keys(SEC).find(k=>k==(c[1]||"").toLowerCase()||SEC[k].toLowerCase()==(c[1]||"").toLowerCase());if(c[0]&&k&&c[3])o.push({n:c[0],c:k,p:+c[2]||0,i:c[3].split(";").map(x=>x.trim()).filter(Boolean)});else bad.push(l.slice(0,28))});D=o;return o.length+" dishes saved."+(bad.length?" Skipped: "+bad.join(" / "):"")}},
  f:{hint:"One section per line: section | table:people, table:people, ... A table can be in two sections.",
@@ -382,7 +479,7 @@ function admin(){
  <div class="chips">${Object.entries(TABS).map(([k,v])=>`<button class="chip${k==tab?" on":""}" data-a="t:${k}">${v}</button>`).join("")}</div>
  ${tab=="x"?`<p class="sub">${D.length} dishes, ${H.length} written questions, ${Object.keys(FL).length} sections. ${store.get("g250db")?"This browser has local edits.":"No local edits."}</p>
  <button class="go" data-a="exp">Export data.json</button><label class="ghost" style="text-align:center">Import data.json<input id="imp" type="file" accept=".json" hidden></label><button class="ghost" data-a="disc">Discard local edits</button>
- <p class="soon">To publish: put the exported data.json next to build.js and run the build. It is embedded in dist/index.html.</p>`
+ <p class="soon">Candidate test link: your site URL followed by <a href="#/test" style="color:#f2c14e">#/test</a></p><p class="soon">To publish: put the exported data.json next to build.js and run the build. It is embedded in dist/index.html.</p>`
  :`${e.sel?`<select id="sel">${e.sel()}</select>`:""}<p class="sub">${e.hint}</p><textarea id="ta" spellcheck="false">${ESC(e.get().join("\n"))}</textarea><button class="go" data-a="save">Save</button><p id="msg" class="sub"></p>`}`;
 }
 function adm(b){const a=b.dataset.a;
@@ -392,7 +489,7 @@ function adm(b){const a=b.dataset.a;
  else if(a=="disc"){store.set("g250db","");setDB(JSON.parse(PUB?JSON.stringify(PUB):SEED));admin()}
 }
 app.onchange=e=>{
- if(e.target.id=="sel"){ed[tab]=e.target.value;admin()}
+ if(e.target.id=="sel"){tick();ed[tab]=e.target.value;admin()}
  if(e.target.id=="imp"){const f=e.target.files[0];f&&f.text().then(t=>{try{setDB(JSON.parse(t));save();admin()}catch(x){alert("That file is not valid.")}})}
 };
 function show(){
@@ -419,13 +516,14 @@ function end(){
  scrollTo(0,0);
 }
 app.onclick=e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){store.set("auth","");main()}else if(b.id=="dologin")doLogin();else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);main()}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+ if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.textContent="Signing out...";setTimeout(()=>{store.set("auth","");main()},800)}else if(b.id=="dologin")doLogin();else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);main()}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
  if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
  else if(e.key=="Enter"&&$("#nx")){e.preventDefault();$("#nx").click()}
  else if("1234".includes(e.key)&&e.key){const o=document.querySelectorAll(".opt")[+e.key-1];if(o&&!o.disabled)o.click()}
 };
+document.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest("button");if(b&&!b.disabled&&(!b.classList.contains("opt")||b.dataset.ck!=null))tick()},true);
 init();
 </script>
 </body>
