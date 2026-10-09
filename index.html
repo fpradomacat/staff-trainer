@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17352a">
+<title>250 Grammi - Front of House Academy</title>
+<style>
+:root{--bg:#17352a;--paper:#f6f2e7;--ink:#1c1c1a;--mu:#6b6a62;--red:#b8322a;--grn:#2c7a4b;--ln:#d9d2bd;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:inherit;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--paper);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+#app{max-width:620px;margin:0 auto;padding:22px 16px 48px}
+.t,h1,h2,h3{font-family:"American Typewriter","Courier New",ui-monospace,monospace}
+.flag{height:5px;border-radius:3px;margin-bottom:18px;background:linear-gradient(90deg,#2c7a4b 33%,#f6f2e7 33% 66%,#b8322a 66%)}
+h1{font-size:clamp(34px,10vw,52px);line-height:1;margin:0 0 6px;letter-spacing:.04em}
+h2{font-size:22px;margin:26px 0 6px}
+.sub{color:#c9d6cc;margin:0 0 16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{font:inherit;color:var(--paper);background:none;border:1.5px solid #f6f2e766;border-radius:99px;padding:8px 14px;cursor:pointer}
+.chip.on{background:var(--paper);color:var(--ink);border-color:var(--paper);font-weight:700}
+.chip small{opacity:.7}
+.go,.ghost{display:block;width:100%;font:700 18px "American Typewriter","Courier New",monospace;padding:16px;border-radius:14px;border:0;cursor:pointer;margin-top:12px}
+.go{background:var(--red);color:var(--paper)}
+.ghost{background:none;color:var(--paper);border:1.5px solid #f6f2e766}
+.go:active,.opt:active{transform:scale(.98)}
+.soon{margin-top:26px;color:#9fb3a5;font-size:14px}
+.top{display:flex;align-items:center;gap:12px}
+.x{font:inherit;font-size:20px;color:var(--paper);background:none;border:0;cursor:pointer;padding:6px}
+.bar{flex:1;height:8px;border-radius:4px;background:#ffffff26;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--paper);transition:width .3s}
+.meta{margin:12px 0;color:#c9d6cc;font-size:15px;min-height:24px}
+.q{background:var(--paper);color:var(--ink);border-radius:14px;padding:22px 20px;margin:0 0 16px;font-size:21px;line-height:1.3;animation:in .25s}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;min-height:58px;padding:12px 14px;margin:0 0 10px;background:var(--paper);color:var(--ink);border:3px solid transparent;border-radius:14px;font:inherit;cursor:pointer;transition:border-color .15s,background .15s}
+.opt span{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ln);display:grid;place-items:center;font:700 14px "Courier New",monospace}
+.opt:not(:disabled):hover{border-color:#f2c14e}
+.opt:disabled{cursor:default;color:var(--ink);opacity:.5}
+.opt.ok{opacity:1;border-color:var(--grn);background:#dcefe0}
+.opt.ok span{background:var(--grn);color:#fff}
+.opt.bad{opacity:1;border-color:var(--red);background:#f6dcd8;animation:sk .3s}
+.opt.bad span{background:var(--red);color:#fff}
+.fb{border-radius:14px;padding:14px 16px;margin-top:6px;background:var(--paper);color:var(--ink);border-left:8px solid var(--grn);animation:in .25s}
+.fb.bad{border-color:var(--red)}
+.fb b{font:700 19px "American Typewriter","Courier New",monospace}
+.fb p{margin:6px 0 0;color:#3c3b36}
+.res{text-align:center}
+.big{font-size:64px;margin-top:16px}
+.rv{text-align:left;background:var(--paper);color:var(--ink);border-radius:12px;padding:12px 14px;margin:10px 0}
+.rv span{display:block;color:var(--grn);font-weight:700;margin:4px 0}
+.rv small{color:var(--mu)}
+.pf{display:grid;gap:12px;margin:18px 0}
+.pc{display:block;text-align:left;width:100%;background:var(--paper);color:var(--ink);border:0;border-left:10px solid var(--red);border-radius:16px;padding:20px;font:inherit;cursor:pointer;transition:transform .15s}
+.pc[data-p=bar]{border-color:#c9a227}.pc[data-p=kitchen]{border-color:var(--grn)}
+.pc b{display:block;font-size:24px}.pc span{color:#3c3b36}.pc:hover{transform:translateY(-2px)}
+textarea,select{width:100%;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;background:var(--paper);color:var(--ink);border:0;border-radius:12px;padding:12px;margin:0 0 8px}
+textarea{min-height:52vh;resize:vertical}
+button:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+@keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+/* ---------- DATA: name ~ category ~ price ~ ingredients (edit here) ---------- */
+let D=[
+"Lussuria~pizza~33~Napoli sauce;fior di latte;ham;pancetta;Italian sausage;mild salami",
+"Accidia~pizza~32~Napoli sauce;fior di latte;Italian sausage;gorgonzola;mushrooms",
+"Avarizia~pizza~34~creamed truffle;mushrooms;rocket;truffle EVO;30+ months parmigiano reggiano",
+"Ira~pizza~32~Napoli sauce;fior di latte;hot cacciatore salame;calabrese 'nduja",
+"Superbia~pizza~32~Napoli sauce;fior di latte;Italian sausage;taleggio;rosemary potatoes;EVO",
+"Invidia~pizza~33~fior di latte;mortadella;stracciatella;pistachios;basil",
+"Gola~pizza~33~fior di latte;porchetta;basil pesto;rosemary;EVO",
+"Margherita~pizza~25~Napoli sauce;fior di latte;basil;EVO",
+"Mozzarella di Bufala~pizza~29~Napoli sauce;buffalo mozzarella;basil;EVO",
+"Napoli~pizza~29~Napoli sauce;fior di latte;white anchovies;black olives;capers;oregano;EVO",
+"Salsiccia~pizza~32~fior di latte;Italian sausage;fresh red onion;cherry tomatoes;30+ months parmigiano reggiano",
+"Capricciosa~pizza~33~Napoli sauce;ham;Roman-style artichokes;black olives;mushrooms",
+"Quattro Formaggi~pizza~34~fior di latte;taleggio;gorgonzola;30+ months parmigiano reggiano;honey",
+"Parma 183 d.c.~pizza~35~Napoli sauce;30+ months prosciutto di Parma;rocket;buffalo mozzarella;30+ months parmigiano reggiano;EVO",
+"Genova~pizza~29~fior di latte;cherry tomatoes;basil pesto (Genovese);buffalo mozzarella;basil;EVO",
+"Patate~pizza~32~fior di latte;pancetta;rosemary potatoes;30+ months parmigiano reggiano;truffled EVO",
+"Mantovana~pizza~35~fior di latte;pumpkin velouté;stracciatella;cherry tomatoes;30+ months prosciutto di Parma",
+"Calzone al Cotto e Funghi~pizza~35~fior di latte;ham;mushrooms;Napoli sauce;buffalo mozzarella;basil;EVO",
+"Gnocchi alla Bolognese~pasta~38~potato gnocchi;pork & beef bolognese;parsley pangrattato;parmigiano reggiano",
+"Gnudi~pasta~35~ricotta & spinach dumplings;brown butter;fried sage;lemon;toasted pine nuts",
+"Fazzoletti al Granchio~pasta~42~handkerchief pasta;Fraser Isle spanner crab;cherry tomatoes;garlic;chilli;cream",
+"Pappardelle al Maiale~pasta~39~ribbon pasta;milk-braised pork neck ragù;ricotta salata",
+"Cavatelli ai Funghi e Salsiccia~pasta~39~saffron gnocchetti;imported porcini;Italian fennel sausage;Tuscan kale;saffron wine;parmigiano reggiano",
+"Risotto Terra e Mare~pasta~40~risotto rice;truffle butter;pecorino;Mooloolaba king prawns",
+"Risotto alla Zucca~pasta~35~risotto rice;roasted pumpkin;ricotta salata;fried sage",
+"Focaccia alla Mozzarella~ante~22~focaccia;mozzarella",
+"Bruschetta~ante~26~fresh tomato;parmigiano reggiano;basil;garlic;balsamic;EVO",
+"Prosciutto & Burrata Board~ante~0~burratina mozzarella;30+ months prosciutto di Parma;rocket;EVO",
+"Salumi & Formaggi Board~ante~0~porchetta;mortadella;cacciatore piccante;taleggio;30+ months parmigiano reggiano;honey",
+"Olive Ripiene~ante~24~Sicilian olives;asiago;Italian sausage",
+"Arancini Pea & Scamorza~ante~25~rice;sweet pea;pecorino;mint;crispy pancetta;scamorza",
+"Fiori di Zucca~ante~26~tempura zucchini flowers;lemon ricotta;sun-dried tomato;confit tomato & shallot compote",
+"Fritto di Acciughe~ante~12~tempura white anchovies;sage;tonnato aioli",
+"Zeppolina~ante~28~fior di latte;ham;'nduja;gorgonzola;Italian sausage",
+"Vitello Tonnato~mains~37~poached veal;tonnato aioli (tuna, caper & anchovy);pickled red onion;black olive dust",
+"Tartare di Manzo~mains~34~hand cut beef;capers;shallot;fresh herbs;hazelnuts;tapioca crisp;sweet-salty herb dressing",
+"Rib Eye Bistecca~mains~55~300g rib eye;charred onion parfait;red wine shallot butter",
+"Cozze all'Nduja~mains~39~mussels;'nduja & tomato broth;wine;prosciutto crumb;focaccia",
+"Pesce di Mercato~mains~47~market fish;smoked tomato burro;citrus & herb salad;fennel seed granola",
+"Caprese~mains~29~burrata;heirloom tomatoes;basil;EVO",
+"Insalata Barbabietola~mains~24~roasted beetroot;whipped goat's curd;burnt butter citrus vinaigrette;toasted walnuts;orange segments;mint",
+"Insalata di Rucola~mains~18~rocket;30+ months parmigiano reggiano;pears;walnuts;balsamic dressing",
+"Broccolini~mains~17~sauteed broccolini;almonds;pecorino romano;confit garlic, chilli & anchovy emulsion",
+"Patatine Fritte~mains~16~chips;mayonnaise",
+"Panna Cotta al Rabarbaro~dessert~18~vanilla buttermilk panna cotta;rhubarb & basil compote;crystallised chocolate soil",
+"Cannoli Siciliani~dessert~0~fried pastry shells;ricotta;chocolate drops;pistachio crumble",
+"Affogato al Liqueur~dessert~23~Crema al Caffè;espresso;pistachio crumble;your choice of liqueur",
+"Nutella Calzone~dessert~21~fried pizza dough;Nutella",
+"Torta al Limone~bar~22~Disaronno;limoncello;Yellow Chartreuse;lemon juice",
+"Teach Me How to Dougie~bar~24~vodka;lychee liqueur;cranberry bitters;lemon;prosecco",
+"Chinola Capriola~bar~23~vodka;passionfruit liqueur;pineapple infused Aperol;lime juice",
+"Don Pedro~bar~24~mezcal;tequila;lime juice;pear & walnut syrup;Angostura",
+"Make Me Blush~bar~23~Malfy grapefruit gin;lemon;sugar;prosecco",
+"Coconut Samba~bar~23~cachaca sugarcane rum;coconut tequila;lime juice;agave",
+"Passionfruit Paloma 0%~bar~17~agave spirit;passionfruit syrup;grapefruit;lime",
+"Southside Swizzle 0%~bar~17~Lyre's pink gin;elderflower syrup;mint;soda",
+"Amaretti Sour 0%~bar~17~Lyre's amaretti;lemon;sugar;orange bitters",
+"Clover Club 0%~bar~17~Lyre's London pink gin;raspberry;lemon juice;sugar",
+"Malfy Arancia G&T~bar~22~Malfy Arancia gin;Mediterranean tonic;orange;cinnamon stick",
+"Malfy Limone G&T~bar~22~Malfy Limone gin;elderflower tonic;lemon;mint;anise",
+"Malfy Originale G&T~bar~22~Malfy Originale gin;Indian tonic;lemon;thyme",
+"Malfy Rosa G&T~bar~22~Malfy Rosa gin;Mediterranean tonic;grapefruit;rosemary",
+"Aperol Spritz~bar~18~Aperol;prosecco;soda",
+"Campari Spritz~bar~18~Campari;prosecco;soda",
+"Hugo Spritz~bar~18~elderflower liqueur;mint;prosecco",
+"Raspberry Spritz~bar~18~raspberry;prosecco;soda",
+"Dal Zotto Limoncello Spritz~bar~18~Dal Zotto prosecco;limoncello"
+].map(s=>{const[n,c,p,i]=s.split("~");return{n,c,p:+p,i:i.split(";")}});
+
+const S=[["Lussuria","Lust"],["Accidia","Sloth"],["Avarizia","Greed"],["Ira","Wrath"],["Superbia","Pride"],["Invidia","Envy"],["Gola","Gluttony"]];
+
+/* Hand-written questions: [category, question, correct, "wrong|wrong|wrong", explanation] */
+let H=[
+["pizza","Which pizzas can be ordered as a white pizza (no Napoli sauce, fior di latte base)?","Capricciosa and Parma 183 d.c.","Margherita and Napoli|Salsiccia and Genova|Lussuria and Ira","Only Capricciosa and Parma list the white option on the menu."],
+["pizza","Which pizza is the 'inside out' pizza?","Calzone al Cotto e Funghi","Zeppolina|Parma 183 d.c.|Capricciosa","Filled with fior di latte, ham and mushrooms, finished with Napoli sauce, torn buffalo mozzarella, basil and EVO."],
+["up","Which add-on costs $4 on the Ira pizza?","Stracciatella rossa piccante","Prosciutto di Parma|Truffle oil & pecorino|Extra 'nduja","Prosciutto di Parma is +$6 (Avarizia, Quattro Formaggi, Genova)."],
+["up","What can you add to the Quattro Formaggi for +$5?","Truffle oil & pecorino","Prosciutto di Parma|Extra honey|Rocket","It is served with honey. Prosciutto di Parma is +$6."],
+["pizza","Which pizza is topped with fresh ingredients after cooking?","Parma 183 d.c.","Margherita|Salsiccia|Patate","Also topped after cooking: Mozzarella di Bufala, Mantovana and Invidia."],
+["pasta","How many gnudi come per serve, and how much is an extra one?","3 per serve, extra $9 each","2 per serve, extra $5 each|4 per serve, extra $9 each|3 per serve, extra $5 each","Soft ricotta and spinach dumplings with brown butter, fried sage, lemon and toasted pine nuts."],
+["pasta","What cutlery do you set for guests having pasta or risotto?","A square-handled spoon","A round-handled spoon|A fish knife|A pizza cutter","If they have no starters, clear the plates first, then set the spoons. The knife can be removed when it isn't needed."],
+["ante","Which starter has a vegetarian option?","Arancini di Riso Pea & Scamorza","Olive Ripiene|Zeppolina|Fritto di Acciughe","Sweet pea, pecorino, mint and crispy pancetta, with a scamorza centre. x3 per serve."],
+["ante","How many pieces come in the Olive Ripiene, Arancini and Fiori di Zucca?","4, 3 and 2","3, 4 and 2|4, 2 and 3|2, 3 and 4","Fritto di Acciughe also comes x3."],
+["ante","Which of these needs a pizza stand on the table?","Bruschetta","Fritto di Acciughe|Arancini|Fiori di Zucca","Bring a pizza stand for focaccia, wooden boards, bruschetta and shared pizza."],
+["ante","What are the wooden board prices, and what comes with them?","$50 for 2, $79 for 4, with wood-fired focaccia","$40 for 2, $79 for 4, with salad|$50 for 2, $99 for 4, with focaccia|$60 for 2, $79 for 4, with bread","Prosciutto & Burrata or Salumi & Formaggi. Truffle burrata on the Prosciutto board is +$6."],
+["mains","What do you put on the table for guests having the Cozze all'Nduja?","A plate for the empty shells","A steak knife|A round-handled spoon|Grated parmesan","Use the blue plates with a rim. The mussels come in a 'nduja and tomato broth, plus focaccia."],
+["mains","Which dish is marked as served cold on the menu?","Vitello Tonnato","Tartare di Manzo|Pesce di Mercato|Cozze all'Nduja","Thinly sliced poached veal with tonnato aioli, pickled red onion and black olive dust."],
+["mains","Fresh single burrata: how much is plain and how much is truffle?","$22 plain, $28 truffle","$22 plain, $26 truffle|$20 plain, $28 truffle|$24 plain, $30 truffle","Served with rocket & EVO. Truffle burrata can also be added to the Caprese for +$6."],
+["set","How much is the 4-course Banchetto, and what is the minimum?","$75pp, minimum 2 people","$55pp, minimum 2 people|$75pp, minimum 4 people|$65pp, minimum 2 people","It starts with the Prosciutto & Burrata board."],
+["set","How many pizzas does a table of 4 get on a set menu?","2 pizzas: one for every two guests","4 pizzas: one each|1 pizza for the whole table|2 half-and-half pizzas","Guests only choose the pizza, one flavour per pair. We don't do half-and-half pizzas."],
+["set","Which pasta and risotto dishes come on the Banchetto?","Both Risotto Terra e Mare and Cavatelli ai Funghi e Salsiccia","Gnudi and Pappardelle al Maiale|Risotto alla Zucca and Gnocchi alla Bolognese|Fazzoletti al Granchio and Gnudi","Both are served: nothing to choose."],
+["set","On the $75pp Banchetto, what does the guest actually choose?","Only the pizza","One starter and one pasta|Pasta or risotto, and pizza or salad|Nothing at all","Every dish comes. Each pair of guests picks one pizza."],
+["set","Which dishes make up the second course of the Banchetto?","Olive Ripiene and Arancini di Riso con Melanzane Arrostite","Olive Ripiene and Fiori di Zucca|Arancini Pea & Scamorza and Zeppolina|Bruschetta and Focaccia alla Mozzarella","The Banchetto arancini have roasted eggplant, taleggio, lemon zest and pecorino romano fonduta."],
+["set","What is served in the last course of the Banchetto?","Pizza and Insalata di Rucola","Cannoli Siciliani|Tiramisu and panna cotta|Pizza and Caprese","The rocket salad has 30+ months parmigiano reggiano, pears, walnuts and balsamic dressing."],
+["set","What is the dessert on the 3-course set menu?","Cannoli Siciliani","Tiramisu|Panna cotta|Nutella calzone","Fried pastry shells filled with ricotta & chocolate drops, finished with a pistachio crumble."],
+["set","How do you handle 'away' for a table on a set menu?","Send 'away' for every course and clear plates at the end or on request","Send 'away' once for the whole table|Clear plates after every course|Tell the kitchen verbally only","Also tell the kitchen that the table is on a set menu, so they know."],
+["gf","How much is a gluten-free pizza base?","+$5","+$3|+$8|It's free","Available on the pizzas. GF pizzas are for intolerances only."],
+["gf","A guest with coeliac disease asks for a gluten-free pizza. What do you say?","GF pizza is for intolerances only (same stone), so suggest a risotto","It's 100% safe, no problem|Only the Margherita is safe|Yes, and it's free","GF pizzas are cooked on the same stone as traditional pizzas."],
+["gf","Which options do we offer gluten-free guests?","GF pizza base, risottos, and fish & meat (confirm with the kitchen)","GF pasta, gnudi and focaccia|Only the salads|Nothing, we don't offer GF","Risottos are our recommended GF option. Fish & meat is or can be GF, so ask first."],
+["gf","Which pasta can be made gluten free as a risotto?","Cavatelli ai Funghi e Salsiccia","Gnocchi alla Bolognese|Pappardelle al Maiale|Fazzoletti al Granchio","Saffron gnocchetti, porcini, Italian fennel sausage, Tuscan kale, saffron wine and parmigiano reggiano."],
+["kids","Per i Piu Piccoli (kids menu): what are the age limit and the price?","13 years and under, $19","12 and under, $19|13 and under, $15|10 and under, $19","Bimbo pizzas, spaghetti al pomodoro, spaghetti bolognese bambini, or cotoletta e patatine."],
+["kids","Which kids' dish is chicken schnitzel and chips?","Cotoletta e Patatine","Spaghetti Bolognese Bambini|Bimbo Pizza Prosciutto Cotto|Spaghetti al Pomodoro","Spaghetti bolognese bambini has the traditional pork & beef bolognese."],
+["kids","What is on the Bimbo Pizza Prosciutto Cotto?","Napoli sauce, fior di latte and ham","Fior di latte, ham and mushrooms|Napoli sauce, fior di latte and salami|Napoli sauce and ham, no cheese","The Bimbo Margherita is just Napoli sauce and fior di latte."],
+["kids","A table has children. What do you take off their place setting?","The wine glasses","The water glasses|The napkins|The cutlery","Do this when you sit the table."],
+["up","How much is the truffle burrata upgrade on the Caprese and on the Prosciutto & Burrata board?","+$6 on both","+$4 on both|+$8 on both|+$6 on the board, +$5 on the Caprese","Offer it when you take the order for either dish."],
+["up","Which of these dishes can be upgraded to truffle burrata?","Caprese","Insalata Barbabietola|Salumi & Formaggi board|Broccolini","The Prosciutto & Burrata board can be upgraded too (+$6)."],
+["up","Which dishes can you upsell with one extra piece when the number of guests fits?","Arancini, Fiori di Zucca and Gnudi","Olive Ripiene, Zeppolina and Bruschetta|Caprese, Broccolini and Patatine Fritte|Focaccia, Cozze and Rib Eye","Arancini come x3, Fiori di Zucca x2 and Gnudi x3. Fritto di Acciughe (x3) also has extras, at $4 per anchovy."],
+["up","A table of 4 orders one Gnudi (x3). What do you offer?","One extra gnudi for $9","A second serve of Gnudi|Extra brown butter|Nothing, it's a fixed portion","Soft ricotta and spinach dumplings. Extra gnudi are $9 each."],
+["up","A table of 3 orders one Fiori di Zucca (x2). What do you offer?","One extra zucchini flower so everyone gets one","Swap it for Olive Ripiene|Nothing, it's a fixed portion|A whole second serve of Fiori di Zucca","Tempura zucchini flowers with lemon ricotta, sun-dried tomato and confit tomato & shallot compote."],
+["up","Fritto di Acciughe comes x3. How much is one extra anchovy?","$4","$2|$6|$12","The whole dish is $12: tempura white anchovies with sage and tonnato aioli."],
+["up","Which add-on can you offer on the Avarizia, Quattro Formaggi and Genova?","Prosciutto di Parma, +$6","Prosciutto di Parma, +$4|Truffle oil, +$6|Extra gorgonzola, +$6","Also: stracciatella rossa piccante +$4 on the Ira, and truffle oil & pecorino +$5 on the Quattro Formaggi."],
+["cheese","Which cheese has nutty, fruity and earthy notes with creamy, buttery undertones?","Taleggio","Pecorino|Ricotta salata|Scamorza","Taleggio is a cow's milk cheese from Lombardy. It is on the Superbia and Quattro Formaggi pizzas and the Salumi & Formaggi board."],
+["cheese","Which cheese is granular, hard and sharply flavoured?","Pecorino","Taleggio|Gorgonzola|Ricotta salata","Pecorino comes from Sardinia. We use it in the Risotto Terra e Mare and the Broccolini."],
+["cheese","Which cheese has a subtle smoky flavour with a light caramel note?","Scamorza","Gorgonzola|Taleggio|Parmigiano Reggiano","From Basilicata, typically cow's milk. It is the centre of the Arancini Pea & Scamorza."],
+["cheese","Which cheese is gentle, rich and smooth, with a mild bitterness?","Gorgonzola","Pecorino|Scamorza|Ricotta salata","From Lombardy, made with unskimmed cow's milk. It is on the Accidia and Quattro Formaggi pizzas and in the Zeppolina."],
+["cheese","Which cheese tastes milky with a hint of salt and is traditionally made with sheep's milk?","Ricotta salata","Taleggio|Gorgonzola|Scamorza","From Lazio. It is on the Pappardelle al Maiale and the Risotto alla Zucca."],
+["cheese","Which cheese is rich, tangy, nutty, sharp and bold?","Parmigiano Reggiano","Taleggio|Ricotta salata|Scamorza","We use 30+ month aged Parmigiano Reggiano on pizzas, salads and the boards."],
+["cheese","Which two cheeses come from Lombardy?","Taleggio and Gorgonzola","Pecorino and Scamorza|Ricotta salata and Scamorza|Pecorino and Gorgonzola","Both are made with cow's milk."],
+["cheese","Which soft cheese is delicately sweet, slightly acidic, with a strong truffle flavour?","Pecorino truffle","Taleggio|Gorgonzola|Scamorza","It is listed on our cheese sheet as a soft pecorino with truffle."],
+["offer","Which phrase do we use when offering pepper or parmigiano?","Would you like some... Let me know when to stop.","Do you want pepper?|Shall I bring the pepper grinder?|Say when you have enough cheese.","Offer, then keep going until the guest tells you to stop."],
+["offer","What do you ask about with every pizza?","Chilli oil","Parmigiano|Pepper|Balsamic","For the Quattro Formaggi, offer honey too."],
+["offer","What extra do you offer with the Quattro Formaggi?","Honey","Pepper|Parmigiano|Balsamic","Ask about chilli oil too, as with every pizza."],
+["offer","How do you serve the Caprese?","Share cutlery, serve as is, don't split, no olive oil","Split the burrata and add olive oil|Share cutlery, split the burrata, add olive oil|Serve as is, with separate cutlery for everyone","The burrata stays whole."],
+["offer","How do you serve the Prosciutto & Burrata board?","Share cutlery, split the burrata, add olive oil","Serve as is, don't split, no olive oil|Don't split the burrata, add parmigiano|Separate cutlery, no olive oil","Compare with the Caprese, which is served as is."],
+["offer","A takeaway Parma or Mantovana pizza: which cold meat goes on the side?","Prosciutto","Mortadella|Pancetta|Ham","The Invidia (Envy) takes mortadella on the side."],
+["offer","A takeaway Invidia pizza: which cold meat goes on the side?","Mortadella","Prosciutto|Porchetta|Ham","Parma and Mantovana get prosciutto on the side."],
+["dessert","Which of these is NOT on the dessert menu?","Zabaglione","Panna Cotta al Rabarbaro|Affogato al Liqueur|Crema al Caffè","We have Tiramisu Classico, Panna Cotta, Nutella Calzone, Crema al Caffè, Cannoli Siciliani and the Affogato al Liqueur."],
+["dessert","What cutlery do you leave for a tiramisu or a panna cotta?","A round-handled spoon","A square-handled spoon|A knife and fork|A fork only","Square-handled spoons are for pasta and risotto."],
+["dessert","What cutlery do you leave for the Nutella Calzone?","A knife and fork","Round-handled spoons|Square-handled spoons|Chopsticks","A fried pizza dough pocket filled with Nutella, ideal to share."],
+["dessert","Which liqueur is NOT an option on the Affogato al Liqueur?","Amaretto","Frangelico|Kahlua|Drambuie","Options: Frangelico, Baileys, Kahlua, Cointreau, Sambuca, Drambuie and Grand Marnier."],
+["dessert","What is the Crema al Caffè?","Italian caffè cream folded into creamy ice cream, with espresso","A coffee-flavoured panna cotta|Tiramisu served in a glass|Espresso poured over vanilla gelato with liqueur","Pour the espresso and liqueur over it and you get the Affogato al Liqueur."],
+["dr","Which beer is alcohol-free and recommended on our list?","Menabrea 0.0%","Peroni 3.5%|Corona|Menabrea Biondi","Peroni 3.5% is the lighter Peroni, but it does contain alcohol."],
+["dr","Which bottled beer is a Japanese-style lager from Noosa?","Heads of Noosa","Coopers Pale Ale|Corona|Peroni Red","Heads of Noosa is the local beer on the bottle list."],
+["dr","Which bottled beer is a pale ale?","Coopers Pale Ale","Corona|Peroni Nastro Azzurro|Heads of Noosa","The others are lagers."],
+["dr","What is a Chinotto?","An Italian cola-style drink","A blood orange soda|An elderflower tonic|A ginger beer","Aranciata Rossa is the Italian blood orange soda."],
+["dr","Which of these wines by the glass is the boldest, fullest-bodied red?","Shiraz (Barossa Valley)","Pinot Noir (Martinborough)|Pinot Nero (Alto Adige)|Chianti","Pinot Noir and Pinot Nero are the lightest, silkiest reds. Reds by the glass are served chilled."],
+["dr","Which red grape gives the lightest, silkiest red?","Pinot Noir / Pinot Nero","Shiraz|Sangiovese|Chianti","A general style guide: Chianti and Sangiovese sit in the middle, Shiraz is the boldest."],
+["dr","Which white by the glass is zesty, fresh and herbal?","Sauvignon Blanc (Marlborough)","Chardonnay|Pinot Grigio|Soave","Chardonnay is the fuller-bodied white. Pinot Grigio and Soave are light and crisp."],
+["dr","Which two whites by the glass come from Veneto?","Pinot Grigio and Soave","Riesling and Chardonnay|Sauvignon Blanc and Riesling|Chardonnay and Soave","Both are DOC wines. Prosecco is also from Veneto."],
+["dr","Which reds by the glass come from Tuscany?","Chianti and Sangiovese","Pinot Nero and Shiraz|Pinot Noir and Chianti|Sangiovese and Shiraz","Pinot Nero is from Alto Adige."],
+["dr","What time is Aperitivo Hour, and how much are the spritzes?","2pm to 5pm daily, $15","3pm to 6pm daily, $15|2pm to 5pm daily, $18|2pm to 5pm on weekends, $15","$18 outside of Aperitivo Hour. Five spritzes: Aperol, Campari, Hugo, Raspberry and Dal Zotto Limoncello."],
+["dr","Which spritz is made with elderflower liqueur, mint and prosecco?","Hugo Spritz","Aperol Spritz|Raspberry Spritz|Campari Spritz","Aperol, Campari and Raspberry spritzes are made with prosecco and soda."],
+["dr","Which spritz is the most bitter?","Campari Spritz","Hugo Spritz|Raspberry Spritz|Dal Zotto Limoncello Spritz","Aperol is the sweeter, softer bitter-orange option."],
+["dr","Which spritz uses the signature Dal Zotto prosecco and limoncello?","Dal Zotto Limoncello Spritz","Hugo Spritz|Aperol Spritz|Raspberry Spritz","Citrus-packed limoncello."],
+["flow","A guest says they don't have a booking. What do you do in the system?","Add the walk-in","Mark them as Sitted and nothing else|Create a booking for tomorrow|Ask them to wait outside","Then walk them to their table with the drinks menus."],
+["flow","A table chooses sparkling water. What else do you do?","Charge it in the system","Nothing, it's complimentary|Tell the kitchen|Offer a free refill of wine","Fill the bottle with sparkling water and pour it into their glasses."],
+["flow","A table of 4 has asked for water. What do you bring?","A filled bottle plus a second bottle without a cap to refill from","One capped bottle|A jug from the bar|Only glasses of water","With more than 2 guests, bring the second bottle so you can refill directly."],
+["flow","A table orders mains only, no starters. What do you do before the food arrives?","Clear the plates and set a square-handled spoon for pasta and risotto","Leave the plates until the end|Set a pizza stand|Set round-handled spoons for everyone","You can also remove the knife where a pasta or risotto doesn't need it."],
+["flow","A table ordered starters. What do you leave on the table?","The plates","Square-handled spoons|A pizza stand|Dessert spoons","With starters, leave the plates. With mains only, clear them first."],
+["flow","When do you explain the specials and the fish market?","When you give them the food menu","When you take the drinks order|When they ask for the bill|After the mains","Give the food menu once the drinks are ordered and the drinks menus are collected."],
+["flow","When you take the food order, what needs special attention?","The order of the dishes (starters, mains, all together)","The wine list|The water type|The dessert choice","Double-check if needed. For a set menu, ask which pizza they want."],
+["flow","When do you send 'away' for the mains on an à la carte table?","When the starters are finished","As soon as the order is taken|When the dessert menu is left|After the bill","Clear the dirty starter plates at the same time."],
+["flow","How often do you check on a table during the meal?","Keep watching for drinks and refills, and ask at least once if everything is good","Only when they call you|Once, at the end|Only when clearing plates","Sell refills of wine or beer, and top up the water."],
+["flow","How do you clean the crumbs from a dirty table?","With a plate and the triangle napkin","With your hand|With a spray and cloth|With the dessert menu","Do it while you offer the dessert menu."],
+["flow","A table asks for the bill. What do you bring?","The printed bill and the card machine","The bill only|A handwritten note|The card machine only","Print it from the system."],
+["map","Which tables make up the New Zealand section?","5, 11 and 34 to 39","1, 2, 4 and 7 to 10|21 to 24 and 31 to 33|41, 42 and 46","A mix of Piazza and Inside tables: 5 (6 people), 11 (2 people) and 34 to 39."],
+["map","How many tables are in the Mare section?","7 tables","5 tables|6 tables|8 tables","Tables 21 to 24 and 31 to 33."],
+["map","Which tables are in the Bar area?","41, 42 and 46","41, 42 and 43|40, 41 and 42|42, 44 and 46","41 and 42 seat 4, 46 seats 2."],
+["map","Which Mare tables seat 2 people?","21, 31, 32 and 33","21, 22, 31 and 32|22, 23, 24 and 31|23, 24, 32 and 33","22, 23 and 24 seat 4."],
+["map","Which Inside tables seat 4 or more?","37, 38 and 39","34, 35 and 36|35, 37 and 39|36, 37 and 38","34, 35 and 36 seat 2. Table 39 seats 6."],
+["map","Which Piazza tables seat 2 people?","4 and 10","1 and 2|7 and 8|9 and 10","The other Piazza tables (1, 2, 7, 8, 9) seat 4."]
+];
+
+let T=[["Focaccia","a flat oven-baked Italian bread"],["'Nduja","a spicy, spreadable pork salumi from Calabria"],["Taleggio","a semi-soft, washed-rind cheese with a strong aroma and a mild fruity tang"],["Burrata","a mozzarella shell filled with stracciatella and cream"],["Asiago","a cow's milk cheese, smooth when fresh and crumbly when aged"],["Mascarpone","an Italian cream cheese made with lemon juice, vinegar or citric acid"],["Tortelli","filled pasta from Lombardy, Emilia-Romagna and Tuscany"],["EVO","extra virgin olive oil"],["Fior di latte","a southern Italian cow's milk cheese made by the pasta filata method"],["Parmigiano Reggiano","a hard, granular Italian cheese (often called Parmesan)"],["Pancetta","Italian bacon: salt-cured pork belly"],["Stracciatella","a soft cheese of cream and shreds of mozzarella"],["Scamorza","a pear-shaped spun-paste cow's milk cheese, like a firm, dry mozzarella"],["Porchetta","seasoned, roasted pork loin from Lazio"],["Pangrattato","crumbled bread, sometimes seasoned"],["Mortadella","cured pork from Bologna"]];
+let O=[["Fazzoletti al Granchio","Pepper"],["Risotto Terra e Mare","Pepper"],["Gnocchi alla Bolognese","Parmigiano"],["Gnudi","Parmigiano"],["Pappardelle al Maiale","Pepper"],["Cavatelli ai Funghi e Salsiccia","Pepper"],["Risotto alla Zucca","Nothing to offer"],["Vitello Tonnato","Pepper"],["Rib Eye Bistecca","Pepper"]];
+const K={"Dining & guest areas":["Check condiments and refill if needed","Clean all condiment bottles and containers","Take away empty glasses and plates","Check and clean napkin stock","Refill black pepper","Refill salt containers","Refill vinegar and oil bottles","Organise and clean sauce areas","Change napkins for wine stands when needed"],"Service & operations":["Check bookings and prepare tables","Polish cutlery and glassware","Restock takeaway bags","Restock menus and wine lists","Keep service stations clean and organised","Keep walkways and floor areas clean and dry"],"Cleaning duties":["Clean the coffee / drink station","Wipe and sanitise tables and chairs","Clean menus","Sweep the floor if required","Empty rubbish bins if full","Swap the dirty napkins bag for an empty one between services"],"Team standards":["Ask supervisors if extra help is needed","Support team members during quiet periods","Maintain a professional presentation at all times","Stay attentive and ready for customers"]};
+let MISE={foh:K,bar:{"Bar prep":["Cut the fruit garnishes for the cocktails"]},kitchen:{"Kitchen prep":["Prepare the ingredients for the dishes"]}};
+K["Service & operations"].push("Fold the napkins");
+const MR=/\bham\b|pancetta|sausage|salam|prosciutto|mortadella|porchetta|nduja|pork|beef|veal|rib eye|mussel|prawn|crab|anchov|tuna|fish/i;
+
+let FLOW=["Ask if they have a booking","Check the booking in the system","Mark the table as Sitted","Walk them to their table with the drinks menus","Ask: tap (or still) or sparkling water?","Put the napkins on their laps","Remove the wine glasses if there are children","Fill the water bottle and pour into the glasses","Charge the sparkling water in the system","Wait for them to choose drinks","Take the drinks order, food menus under your arm","Collect the drinks menus and leave the food menu","Explain the specials and today's fish market","Wait for them to choose food","Take the food order and double-check the course order","Enter the food in the system, watching the course order","Check drinks during the meal and sell refills","Send 'away' for the mains and clear the dirty starter plates","Set the table for the mains","Clear the dirty main plates","Clean the crumbs with a plate and the triangle napkin","Offer and leave the dessert menu","Take the dessert order and enter it in the system","Set the dessert cutlery","Clear the dessert plates","Print the bill and bring it with the card machine"];
+let FL={"Mare":[[21,2],[22,4],[23,4],[24,4],[31,2],[32,2],[33,2]],"Inside":[[34,2],[35,2],[36,2],[37,4],[38,4],[39,6]],"Piazza":[[1,4],[2,4],[4,2],[7,4],[8,4],[9,4],[10,2]],"Bar area":[[41,4],[42,4],[46,2]]};
+FL["New Zealand"]=[[5,6],[11,2],...FL.Inside];
+
+/* ---------- Engine ---------- */
+const CATS={all:"Everything",pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",meat:"Meat or not?",dessert:"Desserts",offer:"What to offer",cheese:"Cheeses",ital:"Italian words",set:"Set menus",up:"Upgrades",gf:"Gluten free",kids:"Kids",flow:"Table service",map:"Tables & sections",dr:"Drinks",bar:"Cocktails & spritzes",mise:"Mise en place"};
+const $=s=>document.querySelector(s),R=a=>a[Math.random()*a.length|0],sh=a=>[...a].sort(()=>Math.random()-.5),pk=(a,n)=>sh(a).slice(0,n);
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let cat="all",qs=[],i=0,score=0,streak=0,miss=[];
+const app=$("#app");
+
+let AC,snd=store.get("snd")!="off";
+function beep(ok){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;(ok?[[660,0],[880,.12]]:[[220,0],[165,.16]]).forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.16,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.26);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+.28)})}catch(e){}}
+function gen(cat){
+ const Q=[],ds=D.filter(d=>cat=="all"||d.c==cat);
+ ds.forEach(d=>{
+  const same=D.filter(x=>x.c==d.c),
+   pool=[...new Set(same.flatMap(x=>x.i))].filter(a=>!d.i.some(x=>x.includes(a)||a.includes(x))),
+   e="Recipe: "+d.i.join(", ")+".";
+  if(d.i.length>2&&pool.length>2){
+   Q.push({q:`Which of these is an ingredient on the ${d.n}?`,a:R(d.i),w:pk(pool,3),e});
+   if(d.i.length>3)Q.push({q:`Which ingredient does NOT belong on the ${d.n}?`,a:R(pool),w:pk(d.i,3),e});
+   const t=pk(d.i,2),o=same.filter(x=>x!=d&&!t.every(y=>x.i.includes(y)));
+   if(o.length>2)Q.push({q:`Which ${({pizza:"pizza",pasta:"pasta or risotto",ante:"starter",mains:"dish",dessert:"dessert",bar:"drink"})[d.c]} combines ${t[0]} and ${t[1]}?`,a:d.n,w:pk(o,3).map(x=>x.n),e});
+  }
+  const pr=[...new Set(same.map(x=>x.p))].filter(p=>p&&p!=d.p);
+  if(d.p&&pr.length>2&&Math.random()<.3)Q.push({q:`How much is the ${d.n}?`,a:"$"+d.p,w:pk(pr,3).map(p=>"$"+p),e:`$${d.p}. ${e}`});
+ });
+ if(cat=="all"||cat=="pizza")pk(S,3).forEach(s=>Q.push({q:`Which of the Seven Sins pizzas is the sin of ${s[1]}?`,a:s[0],w:pk(S.filter(x=>x!=s),3).map(x=>x[0]),e:`${s[0]} means ${s[1]}. Recipe: ${D.find(d=>d.n==s[0]).i.join(", ")}.`}));
+ const smp=(a,n)=>cat=="all"?pk(a,n):a;
+ if(cat=="all"||cat=="meat"){
+  const FD=D.filter(d=>d.c!="dessert"&&d.c!="bar"),mt=d=>MR.test(d.i.join(" ")),M=FD.filter(mt),V=FD.filter(d=>!mt(d)),n="Based on the listed ingredients only. Always confirm with the kitchen for allergies or diets.";
+  for(let k=0;k<(cat=="all"?2:5);k++){const v=R(V),m=R(M);
+   Q.push({q:"Which of these has no meat or fish in its listed ingredients?",a:v.n,w:pk(M,3).map(x=>x.n),e:`${v.n}: ${v.i.join(", ")}. ${n}`});
+   Q.push({q:"Which of these contains meat or fish?",a:m.n,w:pk(V,3).map(x=>x.n),e:`${m.n}: ${m.i.join(", ")}. ${n}`});}
+ }
+ if(cat=="all"||cat=="ital")smp(T,4).forEach(([t,df])=>Q.push({q:`What is ${t}?`,a:df,w:pk(T.filter(x=>x[0]!=t).map(x=>x[1]),3),e:`${t} is ${df}.`}));
+ if(cat=="all"||cat=="offer")smp(O,3).forEach(([n,a])=>Q.push({q:`What do you offer with the ${n}?`,a,w:pk(["Pepper","Parmigiano","Chilli oil","Nothing to offer"].filter(x=>x!=a),3),e:`${a}. Say: "Would you like some... let me know when to stop."`}));
+ if(cat=="mise"){const M=MISE[prof]||{},gs=Object.keys(M),A=Object.values(M).flat();
+  if(gs.length>3)gs.forEach(g=>pk(M[g],3).forEach(t=>Q.push({q:`Under which mise en place area is "${t}"?`,a:g,w:pk(gs.filter(x=>x!=g),3),e:`${g}. Also in this area: ${pk(M[g].filter(x=>x!=t),2).join("; ")}.`})));
+  const F=["Chat with friends at the bar","Leave early without telling anyone","Skip the cleaning if it's quiet","Take a long break during service"];
+  if(A.length)for(let k=0;k<4;k++)Q.push({q:"Which of these belongs to your mise en place?",a:R(A),w:pk(F,3),e:"Areas: "+gs.join(", ")+"."});
+ }
+ if(cat=="all"||cat=="flow"){
+  const ix=FLOW.map((_,k)=>k),al=cat=="all",seq=(k,a,b)=>`Order: ${FLOW.slice(Math.max(0,k-1),k+3).join(", then ")}.`;
+  pk(ix.slice(0,-1),al?2:5).forEach(k=>Q.push({q:`What comes right after: "${FLOW[k]}"?`,a:FLOW[k+1],w:pk(ix.filter(j=>Math.abs(j-k-1)>1),3).map(j=>FLOW[j]),e:seq(k)}));
+  pk(ix.slice(1),al?1:3).forEach(k=>Q.push({q:`What do you do right before: "${FLOW[k]}"?`,a:FLOW[k-1],w:pk(ix.filter(j=>Math.abs(j-k+1)>1),3).map(j=>FLOW[j]),e:seq(k-1)}));
+ }
+ if(cat=="map"){
+  const sc=Object.keys(FL),sn={},all=sc.flatMap(c=>FL[c].map(([t,n])=>({t,n,s:c}))).filter(x=>!sn[x.t]&&(sn[x.t]=1)),own=t=>sc.filter(c=>FL[c].some(x=>x[0]==t)),mx=Math.max(...all.map(x=>x.n));
+  if(sc.length>3){
+   pk(all.filter(x=>own(x.t).length==1),4).forEach(x=>Q.push({q:`Which section is table ${x.t} in?`,a:x.s,w:pk(sc.filter(c=>c!=x.s),3),e:`Table ${x.t} seats ${x.n} and is in ${x.s}.`}));
+   pk(sc,3).forEach(c=>{const x=R(FL[c]),o=all.filter(y=>!FL[c].some(z=>z[0]==y.t));if(o.length>2)Q.push({q:`Which of these tables is in the ${c} section?`,a:"Table "+x[0],w:pk(o,3).map(y=>"Table "+y.t),e:`${c}: ${FL[c].map(y=>y[0]+" ("+y[1]+")").join(", ")}.`})});
+  }
+  pk(all,4).forEach(x=>Q.push({q:`How many people does table ${x.t} seat?`,a:x.n+" people",w:pk([2,4,6,8].filter(n=>n!=x.n),3).map(n=>n+" people"),e:`Table ${x.t}: ${x.n} people, ${own(x.t).join(" and ")}.`}));
+  const big=all.filter(x=>x.n==mx),sm=all.filter(x=>x.n<mx);
+  if(sm.length>2)Q.push({q:`Which of these tables seats ${mx} people?`,a:"Table "+R(big).t,w:pk(sm,3).map(x=>"Table "+x.t),e:`Tables for ${mx}: ${big.map(x=>x.t).join(", ")}.`});
+ }
+ H.filter(h=>h[0]==cat).forEach(h=>Q.push({q:h[1],a:h[2],w:h[3].split("|"),e:h[4]}));
+ return Q;
+}
+
+function main(){
+ app.innerHTML=`<div class="flag"></div><h1 class="t">250 GRAMMI</h1><p class="sub">Team Academy. Choose your team.</p>
+ <div class="pf">${Object.entries(PROF).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
+ <button class="ghost" id="snd">Sound: ${snd?"on":"off"}</button><button class="ghost" id="admin">Admin</button>`;
+}
+function home(){
+ const P=PROF[prof];
+ app.innerHTML=`<div class="flag"></div><div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h1 class="t" style="font-size:30px;margin:0">${P.n}</h1></div>
+ <h2>Trivia</h2><p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
+ <div class="chips">${["all",...P.t].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${CATS[k]}${store.get("b_"+prof+k)?` <small>best ${store.get("b_"+prof+k)}</small>`:""}</button>`).join("")}</div>
+ <button class="go" id="go">Start quiz</button>${prof=="foh"?`<button class="ghost" id="guide">Floor guide</button>`:""}`;
+}
+function guide(){app.innerHTML=`<div class="flag"></div><h2 class="t">Floor guide</h2><p class="sub">Table number (people)</p>`+Object.entries(FL).map(([c,t])=>`<div class="rv"><b>${c}</b><span>${t.map(x=>x[0]+" ("+x[1]+")").join(",  ")}</span></div>`).join("")+`<button class="go" id="home">Back</button>`}
+const SEC={pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",dessert:"Desserts",bar:"Cocktails & drinks"};
+const PROF={foh:{n:"Front of House",d:"Menu, service flow, floor, drinks and mise en place",t:["pizza","pasta","ante","mains","meat","dessert","offer","cheese","ital","set","up","gf","kids","flow","map","dr","mise"]},
+bar:{n:"Bar",d:"Cocktails, spritzes, drinks and mise en place",t:["bar","dr","dessert","ital","mise"]},
+kitchen:{n:"Kitchen",d:"Menu, ingredients, allergens and mise en place",t:["pizza","pasta","ante","mains","meat","dessert","cheese","ital","gf","mise"]}};
+let prof="foh";
+let PUB=null;
+const getDB=()=>({v:1,D,H,T,O,FLOW,FL,MISE});
+const setDB=o=>{if(o.D)D=o.D;if(o.H)H=o.H;if(o.T)T=o.T;if(o.O)O=o.O;if(o.FLOW)FLOW=o.FLOW;if(o.FL)FL=o.FL;if(o.MISE)MISE=o.MISE};
+const SEED=JSON.stringify(getDB()),save=()=>store.set("g250db",JSON.stringify(getDB()));
+async function init(){
+ if(!PUB)try{const r=await fetch("data.json",{cache:"no-cache"});if(r.ok)PUB=await r.json()}catch(e){}
+ if(PUB)setDB(PUB);
+ try{const l=store.get("g250db");if(l)setDB(JSON.parse(l))}catch(e){}
+ main();
+}
+function start(){
+ const raw=cat=="all"?PROF[prof].t.flatMap(t=>pk(gen(t),3)):gen(cat);
+ qs=sh(raw).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,10);
+ if(!qs.length){alert("No questions for this topic yet. Add some in Admin.");return}
+ i=score=streak=0;miss=[];show()}
+
+/* ---------- Admin: edits are stored in this browser; export data.json to publish ---------- */
+const TABS={q:"Questions",d:"Dishes",f:"Floor",m:"Mise en place",flow:"Service flow",dict:"Dictionary",off:"Offers",x:"Data"};
+let tab="q",ed={q:"pizza",m:"foh"};
+const ESC=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"),cl=l=>l.split(/\t|\|/).map(x=>x.trim());
+const opt=(o,cur)=>o.map(([k,v])=>`<option value="${k}"${k==cur?" selected":""}>${v}</option>`).join("");
+const ED={
+ q:{sel:()=>opt(Object.entries(CATS).filter(([k])=>k!="all"),ed.q),hint:"One question per line: question | correct answer | wrong 1 | wrong 2 | wrong 3 | explanation. Rows pasted from Google Sheets also work (Auto rows are skipped).",
+  get:()=>H.filter(h=>h[0]==ed.q).map(h=>[h[1],h[2],...h[3].split("|").concat(["","",""]).slice(0,3),h[4]].join(" | ")),
+  set:L=>{const r=[];L.forEach(l=>{let c=cl(l);if(c[1]=="Auto")return;if(c.length>=8)c=c.slice(2);if(c.length>2)r.push([ed.q,c[0],c[1],c.slice(2,5).filter(Boolean).join("|"),c[5]||""])});H=H.filter(h=>h[0]!=ed.q).concat(r);return r.length+" questions saved."}},
+ d:{hint:"One dish per line: name | section (Pizza, Pasta & Risotto, Starters, Mains & Sides, Desserts, Cocktails & drinks) | price (0 if none) | ingredient; ingredient; ...",
+  get:()=>D.map(d=>[d.n,SEC[d.c],d.p,d.i.join("; ")].join(" | ")),
+  set:L=>{const o=[],bad=[];L.forEach(l=>{const c=cl(l),k=Object.keys(SEC).find(k=>k==(c[1]||"").toLowerCase()||SEC[k].toLowerCase()==(c[1]||"").toLowerCase());if(c[0]&&k&&c[3])o.push({n:c[0],c:k,p:+c[2]||0,i:c[3].split(";").map(x=>x.trim()).filter(Boolean)});else bad.push(l.slice(0,28))});D=o;return o.length+" dishes saved."+(bad.length?" Skipped: "+bad.join(" / "):"")}},
+ f:{hint:"One section per line: section | table:people, table:people, ... A table can be in two sections.",
+  get:()=>Object.entries(FL).map(([c,t])=>c+" | "+t.map(x=>x.join(":")).join(", ")),
+  set:L=>{const o={};L.forEach(l=>{const c=l.split("|"),t=(c[1]||"").split(",").map(x=>x.trim().split(":").map(Number)).filter(q=>q[0]&&q[1]);if(c[0].trim()&&t.length)o[c[0].trim()]=t});FL=o;return Object.keys(o).length+" sections saved."}},
+ m:{sel:()=>opt(Object.entries(PROF).map(([k,v])=>[k,v.n]),ed.m),hint:"Start each area with # (for example # Opening), then one task per line.",
+  get:()=>Object.entries(MISE[ed.m]||{}).flatMap(([g,t])=>["# "+g,...t]),
+  set:L=>{const o={};let g="General";L.forEach(l=>{if(l[0]=="#"){g=l.slice(1).trim()||g;o[g]=o[g]||[]}else(o[g]=o[g]||[]).push(l)});MISE[ed.m]=o;return Object.values(o).flat().length+" tasks saved."}},
+ flow:{hint:"One step per line, in order.",get:()=>FLOW,set:L=>{FLOW=L;return L.length+" steps saved."}},
+ dict:{hint:"term | definition",get:()=>T.map(x=>x.join(" | ")),set:L=>{T=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return T.length+" terms saved."}},
+ off:{hint:"dish | what to offer (Pepper, Parmigiano, Chilli oil, Nothing to offer...)",get:()=>O.map(x=>x.join(" | ")),set:L=>{O=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return O.length+" rules saved."}}
+};
+function admin(){
+ const e=ED[tab];
+ app.innerHTML=`<div class="flag"></div><div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h1 class="t" style="font-size:28px;margin:0">Admin</h1></div>
+ <p class="sub">Edits are saved in this browser only. Use the Data tab to export and publish them.</p>
+ <div class="chips">${Object.entries(TABS).map(([k,v])=>`<button class="chip${k==tab?" on":""}" data-a="t:${k}">${v}</button>`).join("")}</div>
+ ${tab=="x"?`<p class="sub">${D.length} dishes, ${H.length} written questions, ${Object.keys(FL).length} sections. ${store.get("g250db")?"This browser has local edits.":"No local edits."}</p>
+ <button class="go" data-a="exp">Export data.json</button><label class="ghost" style="text-align:center">Import data.json<input id="imp" type="file" accept=".json" hidden></label><button class="ghost" data-a="disc">Discard local edits</button>
+ <p class="soon">To publish: put the exported data.json next to build.js and run the build. It is embedded in dist/index.html.</p>`
+ :`${e.sel?`<select id="sel">${e.sel()}</select>`:""}<p class="sub">${e.hint}</p><textarea id="ta" spellcheck="false">${ESC(e.get().join("\n"))}</textarea><button class="go" data-a="save">Save</button><p id="msg" class="sub"></p>`}`;
+}
+function adm(b){const a=b.dataset.a;
+ if(a.startsWith("t:")){tab=a.slice(2);admin()}
+ else if(a=="save"){const m=ED[tab].set($("#ta").value.split("\n").map(x=>x.trim()).filter(Boolean));save();$("#msg").textContent=m}
+ else if(a=="exp"){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([JSON.stringify(getDB(),null,1)],{type:"application/json"}));l.download="data.json";l.click()}
+ else if(a=="disc"){store.set("g250db","");setDB(JSON.parse(PUB?JSON.stringify(PUB):SEED));admin()}
+}
+app.onchange=e=>{
+ if(e.target.id=="sel"){ed[tab]=e.target.value;admin()}
+ if(e.target.id=="imp"){const f=e.target.files[0];f&&f.text().then(t=>{try{setDB(JSON.parse(t));save();admin()}catch(x){alert("That file is not valid.")}})}
+};
+function show(){
+ const q=qs[i];
+ app.innerHTML=`<div class="top"><button class="x" id="home" aria-label="Quit quiz">&#10005;</button><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><b>${i+1}/${qs.length}</b></div>
+ <div class="meta">Score ${score}${streak>1?` - ${streak} in a row!`:""}</div>
+ <h3 class="q">${q.q}</h3>
+ <div>${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span>${"ABCD"[k]}</span>${o}</button>`).join("")}</div><div id="fb"></div>`;
+}
+function ans(k){
+ const q=qs[i];if(q.done)return;q.done=1;
+ const ok=q.o[k]==q.a;beep(ok);
+ document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(q.o[j]==q.a)b.classList.add("ok");else if(j==k)b.classList.add("bad")});
+ if(ok){score++;streak++}else{streak=0;miss.push(q)}
+ $("#fb").innerHTML=`<div class="fb ${ok?"ok":"bad"}"><b>${ok?R(["Perfetto!","Bravo!","Esatto!","Delizioso!"]):"Not quite."}</b><p>${ok?"":`The answer is ${q.a}. `}${q.e}</p></div><button class="go" id="nx">${i+1<qs.length?"Next question":"See results"}</button>`;
+ $("#nx").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function end(){
+ const p=score/qs.length,key="b_"+prof+cat,b=+store.get(key)||0;if(score>b)store.set(key,score);
+ app.innerHTML=`<div class="res"><div class="big">${p==1?"&#127942;":p>=.7?"&#127837;":p>=.4?"&#127829;":"&#128214;"}</div><h2 class="t">${score} / ${qs.length}</h2>
+ <p class="sub">${p==1?"Perfetto! You know this one cold.":p>=.7?"Great round. Almost there.":p>=.4?"Good start. Review and go again.":"Keep studying. It gets easier."}${score>b&&b?" New personal best!":""}</p>
+ ${miss.length?`<h3 class="t">Review</h3>`+miss.map(q=>`<div class="rv"><b>${q.q}</b><span>${q.a}</span><small>${q.e}</small></div>`).join(""):""}
+ <button class="go" id="go">Play again</button><button class="ghost" id="home">Back to topics</button></div>`;
+ scrollTo(0,0);
+}
+app.onclick=e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);main()}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+ else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
+document.onkeydown=e=>{
+ if(e.key=="Enter"&&$("#nx")){e.preventDefault();$("#nx").click()}
+ else if("1234".includes(e.key)&&e.key){const o=document.querySelectorAll(".opt")[+e.key-1];if(o&&!o.disabled)o.click()}
+};
+init();
+</script>
+</body>
+</html>
