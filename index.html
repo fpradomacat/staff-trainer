@@ -6,32 +6,32 @@
 <meta name="theme-color" content="#17352a">
 <title>250 Grammi - Front of House Academy</title>
 <style>
-:root{--bg:#17352a;--paper:#f6f2e7;--ink:#1c1c1a;--mu:#6b6a62;--red:#b8322a;--grn:#2c7a4b;--ln:#d9d2bd;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#17352a;--paper:#fff;--ink:#1c1c1a;--mu:#6b6a62;--red:#b8322a;--grn:#2c7a4b;--ln:#d9d2bd;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:inherit;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
-body{background:var(--bg);color:var(--paper);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
-#app{max-width:620px;margin:0 auto;padding:22px 16px 48px}
+body{background:#f4f2ec;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+#app{min-height:100vh}#app.narrow{max-width:620px;margin:0 auto;padding:22px 16px 48px}
 .t,h1,h2,h3{font-family:"American Typewriter","Courier New",ui-monospace,monospace}
 .flag{height:5px;border-radius:3px;margin-bottom:18px;background:linear-gradient(90deg,#2c7a4b 33%,#f6f2e7 33% 66%,#b8322a 66%)}
 h1{font-size:clamp(34px,10vw,52px);line-height:1;margin:0 0 6px;letter-spacing:.04em}
 h2{font-size:22px;margin:26px 0 6px}
-.sub{color:#c9d6cc;margin:0 0 16px}
+.sub{color:var(--mu);margin:0 0 16px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
-.chip{font:inherit;color:var(--paper);background:none;border:1.5px solid #f6f2e766;border-radius:99px;padding:8px 14px;cursor:pointer}
-.chip.on{background:var(--paper);color:var(--ink);border-color:var(--paper);font-weight:700}
+.chip{font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--ln);border-radius:99px;padding:8px 14px;cursor:pointer}
+.chip.on{background:var(--bg);color:#fff;border-color:var(--bg);font-weight:700}
 .chip small{opacity:.7}
 .go,.ghost{display:block;width:100%;font:700 18px "American Typewriter","Courier New",monospace;padding:16px;border-radius:14px;border:0;cursor:pointer;margin-top:12px}
 .go{background:var(--red);color:var(--paper)}
-.ghost{background:none;color:var(--paper);border:1.5px solid #f6f2e766}
+.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ln)}
 .go:active,.opt:active{transform:scale(.98)}
-.soon{margin-top:26px;color:#9fb3a5;font-size:14px}
+.soon{margin-top:26px;color:var(--mu);font-size:14px}
 .top{display:flex;align-items:center;gap:12px}
-.x{font:inherit;font-size:20px;color:var(--paper);background:none;border:0;cursor:pointer;padding:6px}
-.bar{flex:1;height:8px;border-radius:4px;background:#ffffff26;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--paper);transition:width .3s}
-.meta{margin:12px 0;color:#c9d6cc;font-size:15px;min-height:24px}
+.x{font:inherit;font-size:20px;color:var(--ink);background:none;border:0;cursor:pointer;padding:6px}
+.bar{flex:1;height:8px;border-radius:4px;background:#0000001a;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bg);transition:width .3s}
+.meta{margin:12px 0;color:var(--mu);font-size:15px;min-height:24px}
 .q{background:var(--paper);color:var(--ink);border-radius:14px;padding:22px 20px;margin:0 0 16px;font-size:21px;line-height:1.3;animation:in .25s}
-.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;min-height:58px;padding:12px 14px;margin:0 0 10px;background:var(--paper);color:var(--ink);border:3px solid transparent;border-radius:14px;font:inherit;cursor:pointer;transition:border-color .15s,background .15s}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;min-height:58px;padding:12px 14px;margin:0 0 10px;background:#fff;color:var(--ink);border:2px solid var(--ln);border-radius:14px;font:inherit;cursor:pointer;transition:border-color .15s,background .15s}
 .opt span{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ln);display:grid;place-items:center;font:700 14px "Courier New",monospace}
 .opt:not(:disabled):hover{border-color:#f2c14e}
 .opt:disabled{cursor:default;color:var(--ink);opacity:.5}
@@ -48,20 +48,20 @@ h2{font-size:22px;margin:26px 0 6px}
 .rv{text-align:left;background:var(--paper);color:var(--ink);border-radius:12px;padding:12px 14px;margin:10px 0}
 .rv span{display:block;color:var(--grn);font-weight:700;margin:4px 0}
 .rv small{color:var(--mu)}
-.pf{display:grid;gap:12px;margin:18px 0}
+.pf{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:8px 0 20px}
 .pc{display:block;text-align:left;width:100%;background:var(--paper);color:var(--ink);border:0;border-left:10px solid var(--red);border-radius:16px;padding:20px;font:inherit;cursor:pointer;transition:transform .15s}
 .pc[data-p=bar]{border-color:#c9a227}.pc[data-p=kitchen]{border-color:var(--grn)}
 .pc b{display:block;font-size:24px}.pc span{color:#3c3b36}.pc:hover{transform:translateY(-2px)}
-textarea,select{width:100%;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;background:var(--paper);color:var(--ink);border:0;border-radius:12px;padding:12px;margin:0 0 8px}
+textarea,select{width:100%;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#fff;color:var(--ink);border:1px solid var(--ln);border-radius:12px;padding:12px;margin:0 0 8px}
 textarea{min-height:52vh;resize:vertical}
 .bar2{display:flex;justify-content:flex-end;align-items:center;gap:14px;margin-bottom:10px}
 .lnk{background:none;border:0;color:#9fb3a5;font:inherit;font-size:13px;cursor:pointer;padding:6px 4px;text-decoration:underline}
 .sm{font:inherit;font-size:14px;color:var(--paper);background:none;border:1.5px solid #f6f2e766;border-radius:99px;padding:6px 16px;cursor:pointer}
 .ct{text-align:center}
 .lg{max-width:360px;margin:24px auto}
-.lg label{display:block;margin:0 0 14px;color:#c9d6cc;font-size:14px}
-.lg input{display:block;width:100%;margin-top:4px;padding:14px;font:16px system-ui,sans-serif;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
-.err{color:#ffb4a9;min-height:24px;margin:0}
+.lg label{display:block;margin:0 0 14px;color:var(--mu);font-size:14px}
+.lg input{display:block;width:100%;margin-top:4px;padding:14px;font:16px system-ui,sans-serif;border:1px solid var(--ln);border-radius:12px;background:#fff;color:var(--ink)}
+.err{color:var(--red);min-height:24px;margin:0}
 .sc{background:var(--paper);color:var(--ink);border-radius:14px;padding:14px 16px;margin:0 0 14px}
 .sc h3{margin:0;font-size:20px}.mu{color:var(--mu);font-size:14px;margin:2px 0 10px}
 .tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
@@ -71,6 +71,34 @@ textarea{min-height:52vh;resize:vertical}
 .lbl{font-size:13px;color:#c9d6cc;border:1px solid #f6f2e744;border-radius:99px;padding:3px 10px}
 .pc#admin{border-color:#8a8a80}
 .go:disabled{opacity:.45;cursor:default}
+.pc,.sc,.rv,.fb,.q{box-shadow:0 1px 2px #0000000f,0 6px 18px #0000000a}
+#cv .ghost{max-width:260px}#cv .go{max-width:420px}
+#shell{display:flex;min-height:100vh}
+#sb{width:250px;flex:none;background:linear-gradient(180deg,#17352a,#0f241c);color:#e8efe9;display:flex;flex-direction:column;padding:18px 12px;position:sticky;top:0;height:100vh;transition:width .2s}
+.brand{padding:4px 10px 16px;border-bottom:1px solid #ffffff1f;margin-bottom:12px}
+.bn{display:block;font-size:20px;letter-spacing:.04em;color:#fff}.mg{display:none;color:#fff;text-align:center;font-size:16px}
+.brand small{color:#9fb3a5}
+#sb nav{flex:1;overflow-y:auto}
+.ng{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7f9a89;margin:18px 10px 6px}
+.ni{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;margin:2px 0;border:0;border-radius:10px;background:none;color:#cfdcd3;font:inherit;font-size:15px;cursor:pointer;text-align:left;white-space:nowrap}
+.ni:hover{background:#ffffff14}.ni.on{background:#ffffff24;color:#fff;box-shadow:inset 3px 0 0 #f2c14e}.ni svg{flex:none}
+.sbf{border-top:1px solid #ffffff1f;padding-top:10px}
+.who{padding:6px 12px 10px}.who b{display:block;color:#fff}.who small{color:#9fb3a5}
+#shell.col #sb{width:68px}
+#shell.col .ni span,#shell.col .ng,#shell.col .brand small,#shell.col .who,#shell.col .bn{display:none}
+#shell.col .mg{display:block}
+#cvw{flex:1;min-width:0;display:flex;flex-direction:column}
+#top{display:flex;align-items:center;gap:12px;padding:12px 24px;background:#fff;border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
+#top h1{font-size:22px;margin:0}
+.ib{background:none;border:0;cursor:pointer;color:var(--ink);padding:6px;border-radius:8px;display:grid;place-items:center}.ib:hover{background:#0000000d}
+.uc{margin-left:auto;font-size:14px;color:var(--mu);background:#f0ede4;border-radius:99px;padding:4px 12px}
+#cv{padding:24px;max-width:920px;width:100%;margin:0 auto}
+#sbk{display:none}
+.lgp{display:grid;grid-template-columns:1.1fr 1fr;min-height:100vh}
+.lgl{background:linear-gradient(160deg,#17352a,#0f241c);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:48px}
+.lgl h1{font-size:clamp(36px,5vw,56px);margin:0 0 10px}.lgl p{color:#b8cbbd;max-width:380px;margin:0}.lgl .flag{width:80px;margin:0 0 28px}
+.lgr{display:flex;align-items:center;justify-content:center;padding:32px}.lgc{width:100%;max-width:380px}.lgc h2{margin:0 0 4px;font-size:26px}.lgc .lg{margin:16px 0}
+@media(max-width:800px){#sb{position:fixed;z-index:20;left:0;transform:translateX(-100%);transition:transform .2s;width:250px!important}#shell.open #sb{transform:none}#shell.open #sbk{display:block;position:fixed;inset:0;background:#0006;border:0;z-index:10}#cv{padding:16px}#top{padding:10px 16px}.lgp{grid-template-columns:1fr}.lgl{padding:32px 24px}}
 button:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 @keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -297,7 +325,7 @@ const CATS={all:"Everything",pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starter
 const $=s=>document.querySelector(s),R=a=>a[Math.random()*a.length|0],sh=a=>[...a].sort(()=>Math.random()-.5),pk=(a,n)=>sh(a).slice(0,n);
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let cat="all",qs=[],i=0,score=0,streak=0,miss=[];
-const app=$("#app");
+const root=$("#app");let app=root,user=null,nav="trivia";
 
 let AC,snd=store.get("snd")!="off";
 function beep(ok){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;(ok?[[660,0],[880,.12]]:[[220,0],[165,.16]]).forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.16,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.26);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+.28)})}catch(e){}}
@@ -359,29 +387,54 @@ function gen(cat){
  return Q;
 }
 
+const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>'};
+const ic=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+const USERS={admin:{p:"admin",role:"admin",n:"Admin"},test:{p:"test",role:"test",n:"Test user"}};
+const ADM=[["q","Questions","questions"],["d","Dishes","dishes"],["f","Floor","floor"],["m","Mise en Place","mise"],["flow","Service flow","flow"],["dict","Dictionary","dict"],["off","Offers","offers"],["x","Data","data"]];
+function page(c){app=root;root.className=c||""}
 function main(){
- const au=store.get("auth")=="1";
- app.innerHTML=`<div class="bar2"><button class="lnk" id="snd">Sound: ${snd?"on":"off"}</button>${au?`<span class="lbl">Admin</span>`:""}<button class="sm" id="${au?"logout":"login"}">${au?"Logout":"Login"}</button></div>
- <div class="flag"></div><h1 class="t ct">250 Grammi</h1><p class="sub ct">Team Academy</p>
- <div class="pf">${au?`<button class="pc" id="admin"><b class="t">Admin</b><span>Manage questions, dishes, tables and mise en place</span></button>`:""}${Object.entries(PROF).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
+ app.innerHTML=`<p class="sub">Choose your team to start a trivia round.</p>
+ <div class="pf">${Object.entries(PROF).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
  <button class="ghost" id="guide">Floor guide</button>`;
 }
+function enter(){
+ page();
+ const adm=user.role=="admin",it=(k,l,i)=>`<button class="ni" data-n="${k}">${ic(i)}<span>${l}</span></button>`;
+ root.innerHTML=`<div id="shell"><aside id="sb"><div class="brand"><span class="bn t">250 Grammi</span><span class="mg t">250</span><small>Team Academy</small></div>
+ <nav>${it("trivia","Trivia","trivia")}${adm?`<p class="ng">Content</p>`+ADM.map(x=>it(...x)).join(""):""}</nav>
+ <div class="sbf"><div class="who"><b>${user.n}</b><small>${adm?"Administrator":"Trainee"}</small></div>
+ <button class="ni" id="snd">${ic("sound")}<span>Sound: ${snd?"on":"off"}</span></button><button class="ni" id="logout">${ic("logout")}<span>Logout</span></button></div></aside>
+ <button id="sbk" aria-label="Close menu"></button>
+ <div id="cvw"><header id="top"><button class="ib" id="tg" aria-label="Toggle menu">${ic("menu")}</button><h1 class="t" id="pt"></h1><span class="uc">${user.n}</span></header><main id="cv"></main></div></div>`;
+ go("trivia");
+}
+function go(n){
+ if(!user)return login();
+ if(n!="trivia"&&user.role!="admin")n="trivia";
+ nav=n;app=$("#cv");
+ document.querySelectorAll(".ni[data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n==n));
+ $("#pt").textContent=n=="trivia"?"Trivia":ADM.find(x=>x[0]==n)[1];
+ $("#shell").classList.remove("open");
+ if(n=="trivia")main();else{tab=n;admin()}
+}
+function tgl(){const sh=$("#shell");(window.matchMedia&&matchMedia("(max-width:800px)").matches)?sh.classList.toggle("open"):sh.classList.toggle("col")}
 function login(msg){
- app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back">&#8592;</button></div>
- <h1 class="t ct">250 Grammi</h1><p class="sub ct">Sign in to manage content</p>
+ page();
+ app.innerHTML=`<div class="lgp"><div class="lgl"><div class="flag"></div><h1 class="t">250 Grammi</h1><p>Team Academy. Training for front of house, bar and kitchen, in one place.</p></div>
+ <div class="lgr"><div class="lgc"><h2 class="t">Sign in</h2><p class="sub">Use your account to continue.</p>
  <div class="lg"><label>Username<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false"></label><label>Password<input id="pw" type="password" autocomplete="current-password"></label>
- <p class="err" id="lerr">${msg||""}</p><button class="go" id="dologin">Sign in</button></div>`;
+ <p class="err" id="lerr">${msg||""}</p><button class="go" id="dologin">Sign in</button></div></div></div></div>`;
  $("#u").focus();
 }
 function doLogin(){
- const u=$("#u").value.trim(),pw=$("#pw").value,b=$("#dologin");
+ const u=$("#u").value.trim().toLowerCase(),pw=$("#pw").value,b=$("#dologin");
  b.disabled=true;b.textContent="Signing in...";$("#lerr").textContent="Contacting server...";
- setTimeout(()=>{if(u=="admin"&&pw=="admin"){store.set("auth","1");main()}else login("Invalid username or password.")},900);
+ setTimeout(()=>{const a=USERS[u];if(a&&a.p==pw){user={u,...a};enter()}else login("Invalid username or password.")},900);
 }
 function home(){
  const P=PROF[prof];
- app.innerHTML=`<div class="flag"></div><div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h1 class="t" style="font-size:30px;margin:0">${P.n}</h1></div>
- <h2>Trivia</h2><p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
+ app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h2 class="t" style="margin:0">${P.n}</h2></div>
+ <p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
  <div class="chips">${["all",...P.t].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${CATS[k]}${store.get("b_"+prof+k)?` <small>best ${store.get("b_"+prof+k)}</small>`:""}</button>`).join("")}</div>
  <button class="go" id="go">Start quiz</button>`;
 }
@@ -406,7 +459,7 @@ async function init(){
  addEventListener("hashchange",route);
  route();
 }
-function route(){location.hash.startsWith("#/test")?cand():main()}
+function route(){if(location.hash.startsWith("#/test")){page("narrow");cand()}else if(user)enter();else login()}
 const CT=["pizza","pasta","ante","mains","meat","cheese","ital","gf","flow","offer","map","phr"],CN=16;
 let cd={};
 function cand(){cd={};
@@ -437,7 +490,7 @@ function cnext(){
  setTimeout(cdone,1500);
 }
 function cdone(){
- const sc=cd.q.filter((q,k)=>q.o[cd.ans[k]]==q.a).length,adm=store.get("auth")=="1";
+ const sc=cd.q.filter((q,k)=>q.o[cd.ans[k]]==q.a).length,adm=user&&user.role=="admin";
  app.innerHTML=`<div class="flag"></div><div class="res"><div class="big">&#127881;</div><h2 class="t">Thank you, ${ESC(cd.n.split(" ")[0])}!</h2>
  <p class="sub">Your answers have been submitted. We will review them and get back to you by email soon.</p></div>
  ${adm?`<div class="rv"><b>Result (visible to admins only)</b><span>${sc} / ${cd.q.length}</span><small>${ESC(cd.n)}, ${ESC(cd.m)}, ${ESC(cd.r)}</small></div>`+cd.q.map((q,k)=>{const ok=q.o[cd.ans[k]]==q.a;return `<div class="rv"><b>${ok?"Correct":"Wrong"}: ${q.q}</b><span>${q.a}</span>${ok?"":`<small>Their answer: ${q.o[cd.ans[k]]}</small>`}</div>`}).join(""):""}`;
@@ -472,11 +525,11 @@ const ED={
  off:{hint:"dish | what to offer (Pepper, Parmigiano, Chilli oil, Nothing to offer...)",get:()=>O.map(x=>x.join(" | ")),set:L=>{O=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return O.length+" rules saved."}}
 };
 function admin(){
- if(store.get("auth")!="1")return login();
+ if(!user||user.role!="admin")return;
  const e=ED[tab];
- app.innerHTML=`<div class="flag"></div><div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h1 class="t" style="font-size:28px;margin:0">Admin</h1></div>
+ app.innerHTML=`
  <p class="sub">Edits are saved in this browser only. Use the Data tab to export and publish them.</p>
- <div class="chips">${Object.entries(TABS).map(([k,v])=>`<button class="chip${k==tab?" on":""}" data-a="t:${k}">${v}</button>`).join("")}</div>
+ 
  ${tab=="x"?`<p class="sub">${D.length} dishes, ${H.length} written questions, ${Object.keys(FL).length} sections. ${store.get("g250db")?"This browser has local edits.":"No local edits."}</p>
  <button class="go" data-a="exp">Export data.json</button><label class="ghost" style="text-align:center">Import data.json<input id="imp" type="file" accept=".json" hidden></label><button class="ghost" data-a="disc">Discard local edits</button>
  <p class="soon">Candidate test link: your site URL followed by <a href="#/test" style="color:#f2c14e">#/test</a></p><p class="soon">To publish: put the exported data.json next to build.js and run the build. It is embedded in dist/index.html.</p>`
@@ -488,7 +541,7 @@ function adm(b){const a=b.dataset.a;
  else if(a=="exp"){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([JSON.stringify(getDB(),null,1)],{type:"application/json"}));l.download="data.json";l.click()}
  else if(a=="disc"){store.set("g250db","");setDB(JSON.parse(PUB?JSON.stringify(PUB):SEED));admin()}
 }
-app.onchange=e=>{
+root.onchange=e=>{
  if(e.target.id=="sel"){tick();ed[tab]=e.target.value;admin()}
  if(e.target.id=="imp"){const f=e.target.files[0];f&&f.text().then(t=>{try{setDB(JSON.parse(t));save();admin()}catch(x){alert("That file is not valid.")}})}
 };
@@ -515,8 +568,8 @@ function end(){
  <button class="go" id="go">Play again</button><button class="ghost" id="home">Back to topics</button></div>`;
  scrollTo(0,0);
 }
-app.onclick=e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.textContent="Signing out...";setTimeout(()=>{store.set("auth","");main()},800)}else if(b.id=="dologin")doLogin();else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);main()}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+root.onclick=e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
  if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
