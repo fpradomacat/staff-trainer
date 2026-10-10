@@ -110,6 +110,8 @@ textarea{min-height:52vh;resize:vertical}
 .dt textarea{resize:vertical}
 .dt td:nth-child(1){width:24%}.dt td:nth-child(2){width:17%}.dt td:nth-child(3){width:9%}.dt td:last-child{width:92px;white-space:nowrap}
 .dt tr.bad td{background:#fdecea}
+.gt{min-width:520px}.gt td:nth-child(1),.gt td:nth-child(2),.gt td:nth-child(3){width:auto}.gt td:last-child{width:130px}.gt td.mu{width:44px;padding-top:14px}
+.qt{min-width:1220px}.qt td:nth-child(1){width:130px}.qt td:nth-child(2){width:23%}.qt td:nth-child(3){width:12%}.qt td:nth-child(4),.qt td:nth-child(5),.qt td:nth-child(6){width:11%}.qt td:nth-child(7){width:20%}.qt td:last-child{width:92px}
 .mu{color:var(--mu);font-size:14px}
 button:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
@@ -399,7 +401,7 @@ function gen(cat){
  return Q;
 }
 
-const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'};
+const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>',up:'<path d="M6 15l6-6 6 6"/>',down:'<path d="M6 9l6 6 6-6"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'};
 const ic=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const USERS={admin:{p:"admin",role:"admin",n:"Admin"},test:{p:"test",role:"test",n:"Test user"}};
 const ADM=[["q","Questions","questions"],["d","Dishes","dishes"],["f","Floor","floor"],["m","Mise en Place","mise"],["flow","Service flow","flow"],["dict","Dictionary","dict"],["off","Offers","offers"],["x","Data","data"]];
@@ -423,6 +425,8 @@ function enter(){
 function go(n){
  if(!user)return login();
  if(n!="trivia"&&user.role!="admin")n="trivia";
+ if(TC[nav]&&n!=nav){if(te.dirty&&!confirm("Discard unsaved changes?"))return;te.dirty=false;te.rows=null;te.k=""}
+ if(nav=="q"&&n!="q"){if(qc&&!confirm("Discard unsaved question changes?"))return;qc=false;qd=null}
  if(nav=="d"&&n!="d"){if(dc&&!confirm("Discard unsaved dish changes?"))return;dc=false;dd=null}
  nav=n;app=$("#cv");
  document.querySelectorAll(".ni[data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n==n));
@@ -486,7 +490,7 @@ function cstart(){
  const n=$("#cn").value.trim(),m=$("#ce").value.trim();
  if(!n||!/^\S+@\S+\.\S+$/.test(m)){$("#cerr").textContent="Please enter your name and a valid email.";return}
  cd={n,m,r:$("#cp").value,ans:[],i:0};
- cd.q=sh(CT.flatMap(t=>pk(gen(t),2))).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,CN);
+ cd.q=sh(CT.flatMap(t=>pk(gen(t),2))).map(fin).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,CN);
  cshow();
 }
 function cshow(){
@@ -511,7 +515,7 @@ function cdone(){
 }
 function start(){
  const raw=cat=="all"?PROF[prof].t.flatMap(t=>pk(gen(t),3)):gen(cat);
- qs=sh(raw).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,10);
+ qs=sh(raw).map(fin).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,10);
  if(!qs.length){alert("No questions for this topic yet. Add some in Admin.");return}
  i=score=streak=0;miss=[];show()}
 
@@ -564,12 +568,108 @@ function dact(b){
   D=dd.map(x=>({n:x.n.trim(),c:x.c,p:+x.p||0,i:x.i.split(";").map(t=>t.trim()).filter(Boolean)}));save();dirty(false);dmsg("Saved "+D.length+" dishes.");
  }
 }
-root.oninput=e=>{const t=e.target,tr=t.closest&&t.closest("tr[data-k]");
- if(tr&&t.dataset.f&&dd){const x=dd.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.f]=t.value;dirty()}}
- else if(t.id=="dq"){df.q=t.value;drows()}};
+root.oninput=e=>{const t=e.target,tr=t.closest&&t.closest("tr[data-k]"),Q=tab=="q",L=Q?qd:dd;
+ if(t.dataset.tf&&tr&&te.rows){const x=te.rows.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.tf]=t.value;tdirty()}}
+ else if(t.id=="tq"){te.q=t.value;trows()}
+ else if(tr&&t.dataset.f&&L){const x=L.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.f]=t.value;Q?qdirty():dirty()}}
+ else if(t.id=="dq"){if(Q){qf.q=t.value;qrows()}else{df.q=t.value;drows()}}};
+/* ---------- Questions table editor ---------- */
+let qd=null,qc=false,qf={q:"",s:""};
+const TOP=()=>Object.entries(CATS).filter(([k])=>k!="all");
+function qdirty(v=true){qc=v;dmsg(v?"You have unsaved changes.":"")}
+function questions(){
+ if(!qd)qd=H.map(h=>{const w=h[3].split("|");return{k:dk(),c:h[0],q:h[1],a:h[2],w1:w[0]||"",w2:w[1]||"",w3:w[2]||"",e:h[4]||""}});
+ app.innerHTML=`<p class="sub">Hand-written questions. Questions generated from dishes, tables, mise en place and the other sections are not listed here. Click Save changes when you are done.</p>
+ <div class="tb"><input id="dq" placeholder="Search questions" value="${ESQ(qf.q)}"><select id="ds"><option value="">All topics</option>${opt(TOP(),qf.s)}</select><button class="go sm2" data-qa="add">+ Add question</button><button class="go sm2 ok" data-qa="save">Save changes</button></div>
+ <p class="sub" id="dmsg"></p><div class="tw"><table class="dt qt"><thead><tr><th>Topic</th><th>Question</th><th>Correct answer</th><th>Wrong 1</th><th>Wrong 2</th><th>Wrong 3</th><th>Explanation</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p>`;
+ qrows();qc&&qdirty();
+}
+function qrows(){
+ const q=qf.q.toLowerCase(),r=qd.filter(x=>(!qf.s||x.c==qf.s)&&(!q||[x.q,x.a,x.w1,x.w2,x.w3,x.e].join(" ").toLowerCase().includes(q))),
+  ta=(f,v,n)=>`<td><textarea data-f="${f}" rows="${n||2}">${ESC(v)}</textarea></td>`;
+ $("#dbody").innerHTML=r.map(x=>`<tr data-k="${x.k}"><td><select data-f="c">${opt(TOP(),x.c)}</select></td>${ta("q",x.q,3)}${ta("a",x.a)}${ta("w1",x.w1)}${ta("w2",x.w2)}${ta("w3",x.w3)}${ta("e",x.e,3)}<td><button class="ib" data-qa="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-qa="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="8" class="mu">No questions match.</td></tr>`;
+ $("#dcount").textContent=`${r.length} of ${qd.length} questions`;
+}
+function qact(b){
+ const a=b.dataset.qa,tr=b.closest("tr"),i=tr?qd.findIndex(x=>x.k==tr.dataset.k):-1;
+ if(a=="add"){qf.q="";$("#dq").value="";qd.unshift({k:dk(),c:qf.s||"pizza",q:"",a:"",w1:"",w2:"",w3:"",e:""});qrows();qdirty();const f=$("#dbody textarea");f&&f.focus()}
+ else if(a=="dup"&&i>=0){qd.splice(i+1,0,{...qd[i],k:dk()});qrows();qdirty()}
+ else if(a=="del"&&i>=0){if(!confirm("Remove this question?"))return;qd.splice(i,1);qrows();qdirty()}
+ else if(a=="save"){
+  const bad=qd.find(x=>{const o=[x.a,x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean);return !x.q.trim()||!x.a.trim()||o.length<2||new Set(o.map(t=>t.toLowerCase())).size!=o.length||[x.a,x.w1,x.w2,x.w3].join("").includes("|")});
+  if(bad){qf={q:"",s:""};questions();const r=document.querySelector(`tr[data-k="${bad.k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}dmsg("Each question needs a question, a correct answer and at least one different wrong answer. Do not use the | character in answers.",1);return}
+  H=qd.map(x=>[x.c,x.q.trim(),x.a.trim(),[x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean).join("|"),x.e.trim()]);save();qdirty(false);dmsg("Saved "+H.length+" questions.");
+ }
+}
+/* ---------- Answer options: always start with a capital letter ---------- */
+const cap=v=>String(v).replace(/^(['"(]*)([a-zà-ÿ])/,(m,p,c)=>p+c.toUpperCase());
+const fin=q=>({...q,a:cap(q.a),w:q.w.map(cap)});
+/* ---------- Generic table editor (Floor, Mise en Place, Service flow, Dictionary, Offers) ---------- */
+let te={k:"",rows:null,dirty:false,q:"",s:"",p:"foh"};
+const tmsg=(t,bad)=>{const m=$("#tmsg");if(m){m.textContent=t||"";m.className="sub"+(bad?" err":"")}},tdirty=(v=true)=>{te.dirty=v;tmsg(v?"You have unsaved changes.":"")};
+const uniq=(R,f,msg)=>{const seen={},b=R.find(x=>{const k=f(x);if(!k||seen[k])return true;seen[k]=1});return b&&[b,msg]};
+const TC={
+ f:{intro:"One row per table in a section. A table can appear in two sections.",flt:"s",fl:"All sections",end:1,
+  cols:[{f:"s",l:"Section",list:"dl1"},{f:"t",l:"Table",t:"number"},{f:"n",l:"People",t:"number"}],
+  dl:()=>({dl1:[...new Set(te.rows.map(x=>x.s))].filter(Boolean)}),
+  get:()=>Object.entries(FL).flatMap(([c,t])=>t.map(([a,b])=>({s:c,t:a,n:b}))),
+  blank:()=>({s:te.s,t:"",n:""}),
+  chk:R=>uniq(R,x=>x.s.trim()&&+x.t>0&&+x.n>0&&x.s.trim().toLowerCase()+"|"+(+x.t),"Each row needs a section, a table number and a number of people, and a table cannot repeat inside the same section."),
+  set:R=>{const o={};R.forEach(x=>{const c=x.s.trim();(o[c]=o[c]||[]).push([+x.t,+x.n])});FL=o}},
+ m:{intro:"Mise en place tasks for each team. Pick a team, then add the areas and tasks.",prof:1,end:1,
+  cols:[{f:"g",l:"Area",list:"dl1"},{f:"t",l:"Task",t:"area"}],
+  dl:()=>({dl1:[...new Set(te.rows.map(x=>x.g))].filter(Boolean)}),
+  get:()=>Object.entries(MISE[te.p]||{}).flatMap(([g,ts])=>ts.map(t=>({g,t}))),
+  blank:()=>{const l=te.rows[te.rows.length-1];return{g:l?l.g:"",t:""}},
+  chk:R=>{const b=R.find(x=>!x.g.trim()||!x.t.trim());return b&&[b,"Each row needs an area and a task."]},
+  set:R=>{const o={};R.forEach(x=>{const g=x.g.trim();(o[g]=o[g]||[]).push(x.t.trim())});MISE[te.p]=o}},
+ flow:{intro:"The table service steps, in order. Use the arrows to reorder them.",move:1,end:1,
+  cols:[{f:"a",l:"Step",t:"area"}],get:()=>FLOW.map(a=>({a})),blank:()=>({a:""}),
+  chk:R=>{const b=R.find(x=>!x.a.trim());return b&&[b,"Each step needs some text."]},set:R=>{FLOW=R.map(x=>x.a.trim())}},
+ dict:{intro:"Italian words and their meanings, used in the Italian words trivia.",
+  cols:[{f:"a",l:"Term"},{f:"b",l:"Definition",t:"area"}],get:()=>T.map(([a,b])=>({a,b})),blank:()=>({a:"",b:""}),
+  chk:R=>R.find(x=>!x.b.trim())?[R.find(x=>!x.b.trim()),"Each term needs a definition."]:uniq(R,x=>x.a.trim().toLowerCase(),"Each term needs a unique name."),
+  set:R=>{T=R.map(x=>[x.a.trim(),x.b.trim()])}},
+ off:{intro:"What to offer with each dish: pepper, parmigiano, chilli oil, honey...",
+  cols:[{f:"a",l:"Dish",list:"dl1"},{f:"b",l:"Offer",list:"dl2"}],
+  dl:()=>({dl1:D.map(d=>d.n),dl2:["Pepper","Parmigiano","Chilli oil","Honey","Nothing to offer"]}),
+  get:()=>O.map(([a,b])=>({a,b})),blank:()=>({a:"",b:""}),
+  chk:R=>R.find(x=>!x.b.trim())?[R.find(x=>!x.b.trim()),"Each row needs an offer."]:uniq(R,x=>x.a.trim().toLowerCase(),"Each dish needs a unique name."),
+  set:R=>{O=R.map(x=>[x.a.trim(),x.b.trim()])}}
+};
+function table(k){
+ const c=TC[k];if(te.k!=k)te={k,rows:null,dirty:false,q:"",s:"",p:te.p||"foh"};
+ if(!te.rows)te.rows=c.get().map(x=>({...x,k:dk()}));
+ const dl=Object.entries(c.dl?c.dl():{}).map(([id,v])=>`<datalist id="${id}">${v.map(x=>`<option value="${ESQ(x)}">`).join("")}</datalist>`).join("");
+ app.innerHTML=`<p class="sub">${c.intro}</p>
+ <div class="tb">${c.prof?`<select id="ts">${opt(Object.entries(PROF).map(([a,b])=>[a,b.n]),te.p)}</select>`:""}<input id="tq" placeholder="Search" value="${ESQ(te.q)}">${c.flt?`<select id="tf"><option value="">${c.fl}</option>${opt([...new Set(te.rows.map(x=>x[c.flt]))].filter(Boolean).map(v=>[v,v]),te.s)}</select>`:""}<button class="go sm2" data-ta="add">+ Add row</button><button class="go sm2 ok" data-ta="save">Save changes</button></div>
+ <p class="sub" id="tmsg"></p><div class="tw"><table class="dt gt"><thead><tr>${c.move?"<th>#</th>":""}${c.cols.map(x=>`<th>${x.l}</th>`).join("")}<th></th></tr></thead><tbody id="tbody"></tbody></table></div><p class="mu" id="tcount"></p>${dl}`;
+ trows();te.dirty&&tdirty();
+}
+function trows(){
+ const c=TC[te.k],q=te.q.toLowerCase(),
+  r=te.rows.filter(x=>(!c.flt||!te.s||x[c.flt]==te.s)&&(!q||c.cols.map(y=>x[y.f]).join(" ").toLowerCase().includes(q))),
+  cell=(x,y)=>y.t=="area"?`<td><textarea data-tf="${y.f}" rows="2">${ESC(x[y.f]??"")}</textarea></td>`:`<td><input data-tf="${y.f}"${y.t=="number"?' type="number" min="1"':""}${y.list?` list="${y.list}"`:""} value="${ESQ(x[y.f]??"")}"></td>`;
+ $("#tbody").innerHTML=r.map(x=>`<tr data-k="${x.k}">${c.move?`<td class="mu">${te.rows.indexOf(x)+1}</td>`:""}${c.cols.map(y=>cell(x,y)).join("")}<td>${c.move?`<button class="ib" data-ta="up" title="Move up" aria-label="Move up">${ic("up")}</button><button class="ib" data-ta="down" title="Move down" aria-label="Move down">${ic("down")}</button>`:""}<button class="ib" data-ta="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-ta="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="9" class="mu">No rows match.</td></tr>`;
+ $("#tcount").textContent=`${r.length} of ${te.rows.length} rows`;
+}
+function tact(b){
+ const c=TC[te.k],a=b.dataset.ta,tr=b.closest("tr"),i=tr?te.rows.findIndex(x=>x.k==tr.dataset.k):-1;
+ if(a=="add"){te.q="";$("#tq").value="";const n={...c.blank(),k:dk()};c.end?te.rows.push(n):te.rows.unshift(n);trows();tdirty();const f=document.querySelector(`tr[data-k="${n.k}"] input,tr[data-k="${n.k}"] textarea`);if(f){f.focus();f.scrollIntoView({block:"center"})}}
+ else if(a=="dup"&&i>=0){te.rows.splice(i+1,0,{...te.rows[i],k:dk()});trows();tdirty()}
+ else if(a=="del"&&i>=0){if(!confirm("Remove this row?"))return;te.rows.splice(i,1);trows();tdirty()}
+ else if((a=="up"&&i>0)||(a=="down"&&i>=0&&i<te.rows.length-1)){const j=a=="up"?i-1:i+1;[te.rows[i],te.rows[j]]=[te.rows[j],te.rows[i]];trows();tdirty()}
+ else if(a=="save"){
+  const bad=c.chk(te.rows);
+  if(bad){te.q="";te.s="";table(te.k);const r=document.querySelector(`tr[data-k="${bad[0].k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}tmsg(bad[1],1);return}
+  c.set(te.rows);save();tdirty(false);tmsg("Saved "+te.rows.length+" rows.");
+ }
+}
 function admin(){
  if(!user||user.role!="admin")return;
  if(tab=="d")return dishes();
+ if(tab=="q")return questions();
+ if(TC[tab])return table(tab);
  const e=ED[tab];
  app.innerHTML=`
  <p class="sub">Edits are saved in this browser only. Use the Data tab to export and publish them.</p>
@@ -587,7 +687,9 @@ function adm(b){const a=b.dataset.a;
 }
 root.onchange=e=>{
  if(e.target.id=="sel"){tick();ed[tab]=e.target.value;admin()}
- if(e.target.id=="ds"){df.s=e.target.value;drows()}
+ if(e.target.id=="ds"){if(tab=="q"){qf.s=e.target.value;qrows()}else{df.s=e.target.value;drows()}}
+ if(e.target.id=="tf"){te.s=e.target.value;trows()}
+ if(e.target.id=="ts"){if(te.dirty&&!confirm("Discard unsaved changes?")){e.target.value=te.p;return}te.p=e.target.value;te.rows=null;te.dirty=false;table(te.k)}
  if(e.target.id=="imp"){const f=e.target.files[0];f&&f.text().then(t=>{try{setDB(JSON.parse(t));save();admin()}catch(x){alert("That file is not valid.")}})}
 };
 function show(){
@@ -614,7 +716,7 @@ function end(){
  scrollTo(0,0);
 }
 root.onclick=e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+ if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.dataset.qa)qact(b);else if(b.dataset.ta)tact(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
  if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
