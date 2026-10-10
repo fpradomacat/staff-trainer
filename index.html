@@ -99,6 +99,18 @@ textarea{min-height:52vh;resize:vertical}
 .lgl h1{font-size:clamp(36px,5vw,56px);margin:0 0 10px}.lgl p{color:#b8cbbd;max-width:380px;margin:0}.lgl .flag{width:80px;margin:0 0 28px}
 .lgr{display:flex;align-items:center;justify-content:center;padding:32px}.lgc{width:100%;max-width:380px}.lgc h2{margin:0 0 4px;font-size:26px}.lgc .lg{margin:16px 0}
 @media(max-width:800px){#sb{position:fixed;z-index:20;left:0;transform:translateX(-100%);transition:transform .2s;width:250px!important}#shell.open #sb{transform:none}#shell.open #sbk{display:block;position:fixed;inset:0;background:#0006;border:0;z-index:10}#cv{padding:16px}#top{padding:10px 16px}.lgp{grid-template-columns:1fr}.lgl{padding:32px 24px}}
+.tb{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 6px}
+.tb input,.tb select{width:auto;flex:1;min-width:180px;margin:0}.tb select{flex:0 0 180px;min-width:150px}
+.sm2{width:auto;display:inline-block;margin:0;padding:10px 16px;font-size:15px}.go.ok{background:var(--grn)}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--ln);border-radius:12px}
+.dt{width:100%;border-collapse:collapse;min-width:760px}
+.dt th{text-align:left;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--mu);padding:10px 8px;border-bottom:1px solid var(--ln)}
+.dt td{padding:6px;vertical-align:top;border-bottom:1px solid #eee9da}
+.dt input,.dt select,.dt textarea{width:100%;margin:0;padding:8px;font:14px system-ui,sans-serif;border:1px solid var(--ln);border-radius:8px;background:#fff;min-height:0}
+.dt textarea{resize:vertical}
+.dt td:nth-child(1){width:24%}.dt td:nth-child(2){width:17%}.dt td:nth-child(3){width:9%}.dt td:last-child{width:92px;white-space:nowrap}
+.dt tr.bad td{background:#fdecea}
+.mu{color:var(--mu);font-size:14px}
 button:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 @keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -387,7 +399,7 @@ function gen(cat){
  return Q;
 }
 
-const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>'};
+const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'};
 const ic=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const USERS={admin:{p:"admin",role:"admin",n:"Admin"},test:{p:"test",role:"test",n:"Test user"}};
 const ADM=[["q","Questions","questions"],["d","Dishes","dishes"],["f","Floor","floor"],["m","Mise en Place","mise"],["flow","Service flow","flow"],["dict","Dictionary","dict"],["off","Offers","offers"],["x","Data","data"]];
@@ -411,6 +423,7 @@ function enter(){
 function go(n){
  if(!user)return login();
  if(n!="trivia"&&user.role!="admin")n="trivia";
+ if(nav=="d"&&n!="d"){if(dc&&!confirm("Discard unsaved dish changes?"))return;dc=false;dd=null}
  nav=n;app=$("#cv");
  document.querySelectorAll(".ni[data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n==n));
  $("#pt").textContent=n=="trivia"?"Trivia":ADM.find(x=>x[0]==n)[1];
@@ -524,8 +537,39 @@ const ED={
  dict:{hint:"term | definition",get:()=>T.map(x=>x.join(" | ")),set:L=>{T=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return T.length+" terms saved."}},
  off:{hint:"dish | what to offer (Pepper, Parmigiano, Chilli oil, Nothing to offer...)",get:()=>O.map(x=>x.join(" | ")),set:L=>{O=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return O.length+" rules saved."}}
 };
+let dd=null,dc=false,df={q:"",s:""};
+const dk=()=>Math.random().toString(36).slice(2),ESQ=t=>ESC(t).replace(/"/g,"&quot;");
+function dmsg(t,bad){const m=$("#dmsg");if(m){m.textContent=t||"";m.className="sub"+(bad?" err":"")}}
+function dirty(v=true){dc=v;dmsg(v?"You have unsaved changes.":"")}
+function dishes(){
+ if(!dd)dd=D.map(d=>({...d,k:dk(),i:d.i.join("; ")}));
+ app.innerHTML=`<p class="sub">Edit the menu here. Separate ingredients with semicolons, then click Save changes.</p>
+ <div class="tb"><input id="dq" placeholder="Search dishes or ingredients" value="${ESQ(df.q)}"><select id="ds"><option value="">All sections</option>${opt(Object.entries(SEC),df.s)}</select><button class="go sm2" data-d="add">+ Add dish</button><button class="go sm2 ok" data-d="save">Save changes</button></div>
+ <p class="sub" id="dmsg"></p><div class="tw"><table class="dt"><thead><tr><th>Dish</th><th>Section</th><th>Price</th><th>Ingredients</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p>`;
+ drows();dc&&dirty();
+}
+function drows(){
+ const q=df.q.toLowerCase(),r=dd.filter(x=>(!df.s||x.c==df.s)&&(!q||(x.n+" "+x.i).toLowerCase().includes(q)));
+ $("#dbody").innerHTML=r.map(x=>`<tr data-k="${x.k}"><td><input data-f="n" value="${ESQ(x.n)}" aria-label="Dish name"></td><td><select data-f="c">${opt(Object.entries(SEC),x.c)}</select></td><td><input data-f="p" type="number" min="0" value="${+x.p||0}" aria-label="Price"></td><td><textarea data-f="i" rows="2" aria-label="Ingredients">${ESC(x.i)}</textarea></td><td><button class="ib" data-d="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-d="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="mu">No dishes match.</td></tr>`;
+ $("#dcount").textContent=`${r.length} of ${dd.length} dishes`;
+}
+function dact(b){
+ const a=b.dataset.d,tr=b.closest("tr"),i=tr?dd.findIndex(x=>x.k==tr.dataset.k):-1;
+ if(a=="add"){df.q="";$("#dq").value="";dd.unshift({k:dk(),n:"",c:df.s||"pizza",p:0,i:""});drows();dirty();const f=$("#dbody input");f&&f.focus()}
+ else if(a=="dup"&&i>=0){dd.splice(i+1,0,{...dd[i],k:dk(),n:dd[i].n+" (copy)"});drows();dirty()}
+ else if(a=="del"&&i>=0){if(!confirm("Remove "+(dd[i].n||"this dish")+"?"))return;dd.splice(i,1);drows();dirty()}
+ else if(a=="save"){
+  const seen={},bad=dd.find(x=>{const n=x.n.trim().toLowerCase();if(!n||!x.i.split(";").some(t=>t.trim())||seen[n])return true;seen[n]=1});
+  if(bad){df={q:"",s:""};dishes();const r=document.querySelector(`tr[data-k="${bad.k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}dmsg("Each dish needs a unique name and at least one ingredient. Check the highlighted row.",1);return}
+  D=dd.map(x=>({n:x.n.trim(),c:x.c,p:+x.p||0,i:x.i.split(";").map(t=>t.trim()).filter(Boolean)}));save();dirty(false);dmsg("Saved "+D.length+" dishes.");
+ }
+}
+root.oninput=e=>{const t=e.target,tr=t.closest&&t.closest("tr[data-k]");
+ if(tr&&t.dataset.f&&dd){const x=dd.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.f]=t.value;dirty()}}
+ else if(t.id=="dq"){df.q=t.value;drows()}};
 function admin(){
  if(!user||user.role!="admin")return;
+ if(tab=="d")return dishes();
  const e=ED[tab];
  app.innerHTML=`
  <p class="sub">Edits are saved in this browser only. Use the Data tab to export and publish them.</p>
@@ -543,6 +587,7 @@ function adm(b){const a=b.dataset.a;
 }
 root.onchange=e=>{
  if(e.target.id=="sel"){tick();ed[tab]=e.target.value;admin()}
+ if(e.target.id=="ds"){df.s=e.target.value;drows()}
  if(e.target.id=="imp"){const f=e.target.files[0];f&&f.text().then(t=>{try{setDB(JSON.parse(t));save();admin()}catch(x){alert("That file is not valid.")}})}
 };
 function show(){
@@ -569,7 +614,7 @@ function end(){
  scrollTo(0,0);
 }
 root.onclick=e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+ if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
  if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
