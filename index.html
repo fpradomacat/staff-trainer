@@ -110,6 +110,10 @@ textarea{min-height:52vh;resize:vertical}
 .dt textarea{resize:vertical}
 .dt td:nth-child(1){width:24%}.dt td:nth-child(2){width:17%}.dt td:nth-child(3){width:9%}.dt td:last-child{width:92px;white-space:nowrap}
 .dt tr.bad td{background:#fdecea}
+.pb{height:8px;background:#0000001a;border-radius:4px;overflow:hidden;min-width:70px;margin-top:4px}.pb i{display:block;height:100%;background:var(--grn)}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0 20px}
+.kp div{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:14px;box-shadow:0 1px 2px #0000000f}.kp b{display:block;font-size:26px}.kp span{color:var(--mu);font-size:13px}
+h3.t{margin:22px 0 8px}
 .gt{min-width:520px}.gt td:nth-child(1),.gt td:nth-child(2),.gt td:nth-child(3){width:auto}.gt td:last-child{width:130px}.gt td.mu{width:44px;padding-top:14px}
 .qt{min-width:1220px}.qt td:nth-child(1){width:130px}.qt td:nth-child(2){width:23%}.qt td:nth-child(3){width:12%}.qt td:nth-child(4),.qt td:nth-child(5),.qt td:nth-child(6){width:11%}.qt td:nth-child(7){width:20%}.qt td:last-child{width:92px}
 .mu{color:var(--mu);font-size:14px}
@@ -362,7 +366,7 @@ function gen(cat){
   const pr=[...new Set(same.map(x=>x.p))].filter(p=>p&&p!=d.p);
   if(d.p&&pr.length>2&&Math.random()<.3)Q.push({q:`How much is the ${d.n}?`,a:"$"+d.p,w:pk(pr,3).map(p=>"$"+p),e:`$${d.p}. ${e}`});
  });
- if(cat=="all"||cat=="pizza")pk(S,3).forEach(s=>Q.push({q:`Which of the Seven Sins pizzas is the sin of ${s[1]}?`,a:s[0],w:pk(S.filter(x=>x!=s),3).map(x=>x[0]),e:`${s[0]} means ${s[1]}. Recipe: ${D.find(d=>d.n==s[0]).i.join(", ")}.`}));
+ if(cat=="all"||cat=="pizza")pk(S,3).forEach(s=>Q.push({ng:1,q:`Which of the Seven Sins pizzas is the sin of ${s[1]}?`,a:s[0],w:pk(S.filter(x=>x!=s),3).map(x=>x[0]),e:`${s[0]} means ${s[1]}. Recipe: ${D.find(d=>d.n==s[0]).i.join(", ")}.`}));
  const smp=(a,n)=>cat=="all"?pk(a,n):a;
  if(cat=="all"||cat=="meat"){
   const FD=D.filter(d=>d.c!="dessert"&&d.c!="bar"&&d.c!="spritz"),mt=d=>MR.test(d.i.join(" ")),M=FD.filter(mt),V=FD.filter(d=>!mt(d)),n="Based on the listed ingredients only. Always confirm with the kitchen for allergies or diets.";
@@ -401,10 +405,11 @@ function gen(cat){
  return Q;
 }
 
-const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>',up:'<path d="M6 15l6-6 6 6"/>',down:'<path d="M6 9l6 6 6-6"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'};
+const IC={trivia:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.8M12 17h.01"/>',questions:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',dishes:'<path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17"/>',floor:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mise:'<path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h9"/>',flow:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a3 3 0 0 1 3-3h7"/>',dict:'<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zM4 20a2 2 0 0 0 2 1h13v-3"/>',offers:'<path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01"/>',data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/>',reports:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',sound:'<path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/>',up:'<path d="M6 15l6-6 6 6"/>',down:'<path d="M6 9l6 6 6-6"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'};
 const ic=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
-const USERS={admin:{p:"admin",role:"admin",n:"Admin"},test:{p:"test",role:"test",n:"Test user"}};
-const ADM=[["q","Questions","questions"],["d","Dishes","dishes"],["f","Floor","floor"],["m","Mise en Place","mise"],["flow","Service flow","flow"],["dict","Dictionary","dict"],["off","Offers","offers"],["x","Data","data"]];
+let USERS={admin:{p:"admin",role:"admin",n:"Admin"},test:{p:"test",role:"user",n:"Test user"}};
+const DEMO={alvaro:["Alvaro","foh",14,.86,.02],josefa:["Josefa","bar",10,.7,.01],thais:["Thais","kitchen",8,.48,.04],maya:["Maya","foh",4,.42,.03],fede:["Fede","all",22,.9,0]};
+const ADM=[["q","Questions","questions"],["d","Dishes","dishes"],["f","Floor","floor"],["m","Mise en Place","mise"],["flow","Service flow","flow"],["dict","Dictionary","dict"],["off","Offers","offers"],["u","Users","users"],["x","Data","data"]];
 function page(c){app=root;root.className=c||""}
 function main(){
  app.innerHTML=`<p class="sub">Choose your team to start a trivia round.</p>
@@ -415,7 +420,7 @@ function enter(){
  page();
  const adm=user.role=="admin",it=(k,l,i)=>`<button class="ni" data-n="${k}">${ic(i)}<span>${l}</span></button>`;
  root.innerHTML=`<div id="shell"><aside id="sb"><div class="brand"><span class="bn t">250 Grammi</span><span class="mg t">250</span><small>Team Academy</small></div>
- <nav>${it("trivia","Trivia","trivia")}${adm?`<p class="ng">Content</p>`+ADM.map(x=>it(...x)).join(""):""}</nav>
+ <nav>${it("trivia","Trivia","trivia")}${it("reports","Reports","reports")}${adm?`<p class="ng">Content</p>`+ADM.map(x=>it(...x)).join(""):""}</nav>
  <div class="sbf"><div class="who"><b>${user.n}</b><small>${adm?"Administrator":"Trainee"}</small></div>
  <button class="ni" id="snd">${ic("sound")}<span>Sound: ${snd?"on":"off"}</span></button><button class="ni" id="logout">${ic("logout")}<span>Logout</span></button></div></aside>
  <button id="sbk" aria-label="Close menu"></button>
@@ -424,35 +429,53 @@ function enter(){
 }
 function go(n){
  if(!user)return login();
- if(n!="trivia"&&user.role!="admin")n="trivia";
+ if(n!="trivia"&&n!="reports"&&user.role!="admin")n="trivia";
  if(TC[nav]&&n!=nav){if(te.dirty&&!confirm("Discard unsaved changes?"))return;te.dirty=false;te.rows=null;te.k=""}
  if(nav=="q"&&n!="q"){if(qc&&!confirm("Discard unsaved question changes?"))return;qc=false;qd=null}
  if(nav=="d"&&n!="d"){if(dc&&!confirm("Discard unsaved dish changes?"))return;dc=false;dd=null}
  nav=n;app=$("#cv");
  document.querySelectorAll(".ni[data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n==n));
- $("#pt").textContent=n=="trivia"?"Trivia":ADM.find(x=>x[0]==n)[1];
+ $("#pt").textContent=({trivia:"Trivia",reports:"Reports"})[n]||ADM.find(x=>x[0]==n)[1];
  $("#shell").classList.remove("open");
- if(n=="trivia")main();else{tab=n;admin()}
+ if(n=="trivia")main();else if(n=="reports"){rp.u="";reports()}else{tab=n;admin()}
 }
 function tgl(){const sh=$("#shell");(window.matchMedia&&matchMedia("(max-width:800px)").matches)?sh.classList.toggle("open"):sh.classList.toggle("col")}
 function login(msg){
  page();
  app.innerHTML=`<div class="lgp"><div class="lgl"><div class="flag"></div><h1 class="t">250 Grammi</h1><p>Team Academy. Training for front of house, bar and kitchen, in one place.</p></div>
  <div class="lgr"><div class="lgc"><h2 class="t">Sign in</h2><p class="sub">Use your account to continue.</p>
- <div class="lg"><label>Username<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false"></label><label>Password<input id="pw" type="password" autocomplete="current-password"></label>
+ <div class="lg"><label>Username<input id="u" value="test" autocomplete="username" autocapitalize="none" spellcheck="false"></label><label>Password<input id="pw" type="password" value="test" autocomplete="current-password"></label>
  <p class="err" id="lerr">${msg||""}</p><button class="go" id="dologin">Sign in</button></div></div></div></div>`;
- $("#u").focus();
+ $("#dologin").focus();
 }
 function doLogin(){
  const u=$("#u").value.trim().toLowerCase(),pw=$("#pw").value,b=$("#dologin");
  b.disabled=true;b.textContent="Signing in...";$("#lerr").textContent="Contacting server...";
  setTimeout(()=>{const a=USERS[u];if(a&&a.p==pw){user={u,...a};enter()}else login("Invalid username or password.")},900);
 }
+function seedDemo(){
+ let a=7;const rnd=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+ const now=Date.now(),pf=Object.keys(PROF);
+ Object.entries(DEMO).forEach(([u,[n,team,rounds,base,gain]])=>{
+  if(!USERS[u])USERS[u]={p:u,role:"user",n};
+  if(stats.some(x=>x.u==u))return;
+  for(let r=0;r<rounds;r++){
+   const p=team=="all"||rnd()<.2?pf[rnd()*3|0]:team,tp=PROF[p].t,c=rnd()<.3?"all":tp[rnd()*tp.length|0],
+    pool=(c=="all"?tp.flatMap(t=>gen(t)):gen(c)).map(q=>q.q),
+    sk=Math.min(.97,Math.max(.1,base-(rounds-r)*gain*.5+(rnd()-.5)*.3)),
+    sc=Array.from({length:10},()=>rnd()<sk?1:0).reduce((x,y)=>x+y,0),
+    ms=Array.from({length:10-sc},()=>pool[rnd()*pool.length|0]).filter(Boolean).slice(0,10);
+   stats.push({u,p,c,s:sc,t:10,d:now-(rounds-r)*(26/rounds)*864e5-rnd()*5e7,m:ms});
+  }
+ });
+ stats.sort((x,y)=>x.d-y.d);store.set("g250st",JSON.stringify(stats));save();store.set("g250seed","1");
+}
+const bestOf=k=>Math.max(0,...stats.filter(x=>user&&x.u==user.u&&x.p==prof&&x.c==k).map(x=>x.s));
 function home(){
  const P=PROF[prof];
  app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h2 class="t" style="margin:0">${P.n}</h2></div>
  <p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
- <div class="chips">${["all",...P.t].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${CATS[k]}${store.get("b_"+prof+k)?` <small>best ${store.get("b_"+prof+k)}</small>`:""}</button>`).join("")}</div>
+ <div class="chips">${["all",...P.t].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${CATS[k]}${bestOf(k)?` <small>best ${bestOf(k)}</small>`:""}</button>`).join("")}</div>
  <button class="go" id="go">Start quiz</button>`;
 }
 function guide(){
@@ -466,13 +489,16 @@ bar:{n:"Bar",d:"Cocktails, spritzes, wines, beers and mise en place",t:["bar","s
 kitchen:{n:"Kitchen",d:"Menu, ingredients, allergens and mise en place",t:["pizza","pasta","ante","mains","meat","dessert","cheese","ital","gf","mise"]}};
 let prof="foh";
 let PUB=null;
-const getDB=()=>({v:1,D,H,T,O,FLOW,FL,MISE});
-const setDB=o=>{if(o.D)D=o.D;if(o.H)H=o.H;if(o.T)T=o.T;if(o.O)O=o.O;if(o.FLOW)FLOW=o.FLOW;if(o.FL)FL=o.FL;if(o.MISE)MISE=o.MISE};
+const getDB=()=>({v:1,D,H,T,O,FLOW,FL,MISE,U:USERS});
+const setDB=o=>{if(o.D)D=o.D;if(o.H)H=o.H;if(o.T)T=o.T;if(o.O)O=o.O;if(o.FLOW)FLOW=o.FLOW;if(o.FL)FL=o.FL;if(o.MISE)MISE=o.MISE;if(o.U)USERS=o.U};
 const SEED=JSON.stringify(getDB()),save=()=>store.set("g250db",JSON.stringify(getDB()));
 async function init(){
  if(!PUB)try{const r=await fetch("data.json",{cache:"no-cache"});if(r.ok)PUB=await r.json()}catch(e){}
  if(PUB)setDB(PUB);
+ const dbSaved=store.get("g250db");
+ try{stats=JSON.parse(store.get("g250st")||"[]")}catch(e){stats=[]}
  try{const l=store.get("g250db");if(l)setDB(JSON.parse(l))}catch(e){}
+ if(!store.get("g250seed"))seedDemo();
  addEventListener("hashchange",route);
  route();
 }
@@ -496,7 +522,7 @@ function cstart(){
 function cshow(){
  const q=cd.q[cd.i],last=cd.i+1==cd.q.length;
  app.innerHTML=`<div class="top"><div class="bar"><i style="width:${cd.i/cd.q.length*100}%"></i></div><b>${cd.i+1}/${cd.q.length}</b></div>
- <h3 class="q">${q.q}</h3><div>${q.o.map((o,k)=>`<button class="opt" data-ck="${k}"><span>${"ABCD"[k]}</span>${o}</button>`).join("")}</div>
+ <h3 class="q">${q.q}</h3><div>${q.o.map((o,k)=>`<button class="opt" data-ck="${k}"><span>${k+1}</span>${o}</button>`).join("")}</div>
  <button class="go" id="cnext" disabled>${last?"Submit":"Next"}</button>`;
 }
 function csel(k){cd.ans[cd.i]=k;document.querySelectorAll(".opt").forEach((x,j)=>x.classList.toggle("sel",j==k));$("#cnext").disabled=false}
@@ -571,6 +597,7 @@ function dact(b){
 root.oninput=e=>{const t=e.target,tr=t.closest&&t.closest("tr[data-k]"),Q=tab=="q",L=Q?qd:dd;
  if(t.dataset.tf&&tr&&te.rows){const x=te.rows.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.tf]=t.value;tdirty()}}
  else if(t.id=="tq"){te.q=t.value;trows()}
+ else if(t.id=="rf"){rp.f=t.value;rlist()}
  else if(tr&&t.dataset.f&&L){const x=L.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.f]=t.value;Q?qdirty():dirty()}}
  else if(t.id=="dq"){if(Q){qf.q=t.value;qrows()}else{df.q=t.value;drows()}}};
 /* ---------- Questions table editor ---------- */
@@ -603,12 +630,22 @@ function qact(b){
 }
 /* ---------- Answer options: always start with a capital letter ---------- */
 const cap=v=>String(v).replace(/^(['"(]*)([a-zà-ÿ])/,(m,p,c)=>p+c.toUpperCase());
-const fin=q=>({...q,a:cap(q.a),w:q.w.map(cap)});
+const SINS=Object.fromEntries(S);
+const pl=(v,g)=>{const d=D.find(x=>x.n==v&&x.c=="pizza");return d?v+(g&&SINS[v]?" ("+SINS[v]+")":"")+" pizza":v};
+const fin=q=>{const g=!q.ng,f=x=>cap(pl(x,g));return{...q,a:f(q.a),w:q.w.map(f)}};
 /* ---------- Generic table editor (Floor, Mise en Place, Service flow, Dictionary, Offers) ---------- */
 let te={k:"",rows:null,dirty:false,q:"",s:"",p:"foh"};
 const tmsg=(t,bad)=>{const m=$("#tmsg");if(m){m.textContent=t||"";m.className="sub"+(bad?" err":"")}},tdirty=(v=true)=>{te.dirty=v;tmsg(v?"You have unsaved changes.":"")};
 const uniq=(R,f,msg)=>{const seen={},b=R.find(x=>{const k=f(x);if(!k||seen[k])return true;seen[k]=1});return b&&[b,msg]};
 const TC={
+ u:{intro:"People who can sign in. Administrators see every content tool and all users' reports.",end:1,
+  cols:[{f:"u",l:"Username"},{f:"n",l:"Name"},{f:"p",l:"Password"},{f:"r",l:"Role",t:"sel",o:[["user","Trainee"],["admin","Administrator"]]}],
+  get:()=>Object.entries(USERS).map(([u,a])=>({u,n:a.n,p:a.p,r:a.role})),blank:()=>({u:"",n:"",p:"",r:"user"}),
+  chk:R=>{const b=R.find(x=>!/^[a-z0-9._-]+$/i.test(x.u.trim())||!x.p);if(b)return[b,"Each user needs a username (letters, numbers, dots or dashes) and a password."];
+   const d=uniq(R,x=>x.u.trim().toLowerCase(),"Usernames must be unique.");if(d)return d;
+   if(!R.some(x=>x.r=="admin"))return[R[0],"There must be at least one administrator."];
+   if(!R.some(x=>x.u.trim().toLowerCase()==user.u))return[R[0],"You cannot remove the account you are signed in with."]},
+  set:R=>{const o={};R.forEach(x=>{o[x.u.trim().toLowerCase()]={p:x.p,role:x.r,n:x.n.trim()||x.u.trim()}});USERS=o}},
  f:{intro:"One row per table in a section. A table can appear in two sections.",flt:"s",fl:"All sections",end:1,
   cols:[{f:"s",l:"Section",list:"dl1"},{f:"t",l:"Table",t:"number"},{f:"n",l:"People",t:"number"}],
   dl:()=>({dl1:[...new Set(te.rows.map(x=>x.s))].filter(Boolean)}),
@@ -649,7 +686,7 @@ function table(k){
 function trows(){
  const c=TC[te.k],q=te.q.toLowerCase(),
   r=te.rows.filter(x=>(!c.flt||!te.s||x[c.flt]==te.s)&&(!q||c.cols.map(y=>x[y.f]).join(" ").toLowerCase().includes(q))),
-  cell=(x,y)=>y.t=="area"?`<td><textarea data-tf="${y.f}" rows="2">${ESC(x[y.f]??"")}</textarea></td>`:`<td><input data-tf="${y.f}"${y.t=="number"?' type="number" min="1"':""}${y.list?` list="${y.list}"`:""} value="${ESQ(x[y.f]??"")}"></td>`;
+  cell=(x,y)=>y.t=="sel"?`<td><select data-tf="${y.f}">${opt(y.o,x[y.f])}</select></td>`:y.t=="area"?`<td><textarea data-tf="${y.f}" rows="2">${ESC(x[y.f]??"")}</textarea></td>`:`<td><input data-tf="${y.f}"${y.t=="number"?' type="number" min="1"':""}${y.list?` list="${y.list}"`:""} value="${ESQ(x[y.f]??"")}"></td>`;
  $("#tbody").innerHTML=r.map(x=>`<tr data-k="${x.k}">${c.move?`<td class="mu">${te.rows.indexOf(x)+1}</td>`:""}${c.cols.map(y=>cell(x,y)).join("")}<td>${c.move?`<button class="ib" data-ta="up" title="Move up" aria-label="Move up">${ic("up")}</button><button class="ib" data-ta="down" title="Move down" aria-label="Move down">${ic("down")}</button>`:""}<button class="ib" data-ta="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-ta="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="9" class="mu">No rows match.</td></tr>`;
  $("#tcount").textContent=`${r.length} of ${te.rows.length} rows`;
 }
@@ -664,6 +701,32 @@ function tact(b){
   if(bad){te.q="";te.s="";table(te.k);const r=document.querySelector(`tr[data-k="${bad[0].k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}tmsg(bad[1],1);return}
   c.set(te.rows);save();tdirty(false);tmsg("Saved "+te.rows.length+" rows.");
  }
+}
+/* ---------- Reports (stats are stored in this browser) ---------- */
+let stats=[],rp={u:"",f:""};
+const pct=(a,b)=>b?Math.round(a/b*100):0,pbar=p=>`<div class="pb"><i style="width:${p}%"></i></div>`,
+ fd=t=>t?new Date(t).toLocaleString([],{dateStyle:"medium",timeStyle:"short"}):"-";
+function summ(R){const t=R.reduce((a,x)=>a+x.t,0),s=R.reduce((a,x)=>a+x.s,0);return{r:R.length,t,p:pct(s,t),best:R.length?Math.max(...R.map(x=>pct(x.s,x.t))):0,last:R.length?Math.max(...R.map(x=>x.d)):0}}
+function reports(){
+ if(user.role!="admin")return rview(user.u);
+ if(rp.u)return rview(rp.u);
+ app.innerHTML=`<p class="sub">Trivia results by user. Stats are stored in this browser.</p><div class="tb"><input id="rf" placeholder="Filter users" value="${ESQ(rp.f)}"></div>
+ <div class="tw"><table class="dt gt"><thead><tr><th>User</th><th>Role</th><th>Rounds</th><th>Average</th><th>Best round</th><th>Last round</th><th></th></tr></thead><tbody id="rbody"></tbody></table></div>`;
+ rlist();
+}
+function rlist(){
+ const q=rp.f.toLowerCase(),r=Object.entries(USERS).map(([u,a])=>({u,...a,...summ(stats.filter(x=>x.u==u))})).filter(x=>!q||(x.u+" "+x.n+" "+(x.role=="admin"?"administrator":"trainee")).toLowerCase().includes(q));
+ $("#rbody").innerHTML=r.map(x=>`<tr><td><b>${ESC(x.n)}</b><div class="mu">${ESC(x.u)}</div></td><td>${x.role=="admin"?"Administrator":"Trainee"}</td><td>${x.r}</td><td>${x.p}% ${pbar(x.p)}</td><td>${x.best}%</td><td>${fd(x.last)}</td><td><button class="ghost sm2" data-r="${ESQ(x.u)}">View</button></td></tr>`).join("")||`<tr><td colspan="7" class="mu">No users match.</td></tr>`;
+}
+function rview(u){
+ const R=stats.filter(x=>x.u==u).sort((a,b)=>b.d-a.d),S=summ(R),a=USERS[u]||{n:u},bt={},ms={};
+ R.forEach(x=>{const k=CATS[x.c]||x.c;bt[k]=bt[k]||{s:0,t:0,n:0};bt[k].s+=x.s;bt[k].t+=x.t;bt[k].n++;(x.m||[]).forEach(q=>ms[q]=(ms[q]||0)+1)});
+ const top=Object.entries(ms).sort((p,q)=>q[1]-p[1]).slice(0,5);
+ app.innerHTML=`<div class="top">${user.role=="admin"?`<button class="x" data-r="" aria-label="Back to users">&#8592;</button>`:""}<h2 class="t" style="margin:0">${ESC(a.n)}</h2></div>
+ <div class="kp"><div><b>${S.r}</b><span>Rounds played</span></div><div><b>${S.p}%</b><span>Average score</span></div><div><b>${S.best}%</b><span>Best round</span></div><div><b>${S.t}</b><span>Questions answered</span></div></div>`+
+ (S.r?`<h3 class="t">By topic</h3><div class="tw"><table class="dt gt"><thead><tr><th>Topic</th><th>Rounds</th><th>Accuracy</th></tr></thead><tbody>${Object.entries(bt).sort((x,y)=>pct(x[1].s,x[1].t)-pct(y[1].s,y[1].t)).map(([k,v])=>`<tr><td>${ESC(k)}</td><td>${v.n}</td><td>${pct(v.s,v.t)}% ${pbar(pct(v.s,v.t))}</td></tr>`).join("")}</tbody></table></div>
+ <h3 class="t">Most missed questions</h3>${top.length?`<div class="tw"><table class="dt gt"><tbody>${top.map(([q,n])=>`<tr><td>${ESC(q)}</td><td style="width:90px">${n} time${n>1?"s":""}</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No missed questions. Great work!</p>`}
+ <h3 class="t">Recent rounds</h3><div class="tw"><table class="dt gt"><thead><tr><th>Date</th><th>Team</th><th>Topic</th><th>Score</th></tr></thead><tbody>${R.slice(0,15).map(x=>`<tr><td>${fd(x.d)}</td><td>${(PROF[x.p]||{}).n||x.p}</td><td>${ESC(CATS[x.c]||x.c)}</td><td>${x.s}/${x.t} (${pct(x.s,x.t)}%)</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No rounds yet. Play a trivia round to see stats here.</p>`);
 }
 function admin(){
  if(!user||user.role!="admin")return;
@@ -697,7 +760,7 @@ function show(){
  app.innerHTML=`<div class="top"><button class="x" id="home" aria-label="Quit quiz">&#10005;</button><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><b>${i+1}/${qs.length}</b></div>
  <div class="meta">Score ${score}${streak>1?` - ${streak} in a row!`:""}</div>
  <h3 class="q">${q.q}</h3>
- <div>${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span>${"ABCD"[k]}</span>${o}</button>`).join("")}</div><div id="fb"></div>`;
+ <div>${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span>${k+1}</span>${o}</button>`).join("")}</div><div id="fb"></div>`;
 }
 function ans(k){
  const q=qs[i];if(q.done)return;q.done=1;
@@ -708,7 +771,8 @@ function ans(k){
  $("#nx").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function end(){
- const p=score/qs.length,key="b_"+prof+cat,b=+store.get(key)||0;if(score>b)store.set(key,score);
+ if(user){stats.push({u:user.u,p:prof,c:cat,s:score,t:qs.length,d:Date.now(),m:miss.slice(0,10).map(q=>q.q)});store.set("g250st",JSON.stringify(stats))}
+ const p=score/qs.length,b=Math.max(0,...stats.slice(0,-1).filter(x=>x.u==user.u&&x.p==prof&&x.c==cat).map(x=>x.s));
  app.innerHTML=`<div class="res"><div class="big">${p==1?"&#127942;":p>=.7?"&#127837;":p>=.4?"&#127829;":"&#128214;"}</div><h2 class="t">${score} / ${qs.length}</h2>
  <p class="sub">${p==1?"Perfetto! You know this one cold.":p>=.7?"Great round. Almost there.":p>=.4?"Good start. Review and go again.":"Keep studying. It gets easier."}${score>b&&b?" New personal best!":""}</p>
  ${miss.length?`<h3 class="t">Review</h3>`+miss.map(q=>`<div class="rv"><b>${q.q}</b><span>${q.a}</span><small>${q.e}</small></div>`).join(""):""}
@@ -716,7 +780,7 @@ function end(){
  scrollTo(0,0);
 }
 root.onclick=e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.dataset.qa)qact(b);else if(b.dataset.ta)tact(b);else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+ if(b.id=="go")start();else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.dataset.qa)qact(b);else if(b.dataset.ta)tact(b);else if(b.dataset.r!=null){rp.u=b.dataset.r;reports()}else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
  if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
