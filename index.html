@@ -125,6 +125,7 @@ button:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 @keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.ing{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ig{display:inline-flex;align-items:center;gap:2px;background:#eef3ee;border:1px solid var(--ln);border-radius:99px;padding:3px 4px 3px 10px;font-size:13px}.ig button{border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:0 6px;color:var(--mu)}.ig button:hover{color:var(--red)}.ai{display:flex;gap:6px;width:100%;margin-top:6px}.ai input{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -542,16 +543,24 @@ function dishes(){
  if(!dd)dd=D.map(d=>({...d,k:dk(),i:d.i.join("; ")}));
  app.innerHTML=`<p class="sub">Edit the menu here. Separate ingredients with semicolons, then click Save changes.</p>
  <div class="tb"><input id="dq" placeholder="Search dishes or ingredients" value="${ESQ(df.q)}"><select id="ds"><option value="">All sections</option>${opt(Object.entries(SEC),df.s)}</select><button class="go sm2" data-d="add">+ Add dish</button><button class="go sm2 ok" data-d="save">Save changes</button></div>
- <p class="sub" id="dmsg"></p><div class="tw"><table class="dt"><thead><tr><th>Dish</th><th>Section</th><th>Price</th><th>Ingredients</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p>`;
+ <p class="sub" id="dmsg"></p><datalist id="ingdl"></datalist><div class="tw"><table class="dt"><thead><tr><th>Dish</th><th>Section</th><th>Price</th><th>Ingredients</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p>`;
  drows();dc&&dirty();
 }
+const ilist=x=>x.i.split(";").map(t=>t.trim()).filter(Boolean);
+const allIng=()=>[...new Set([...D.flatMap(d=>d.i),...(dd||[]).flatMap(ilist)])].sort((a,b)=>a.localeCompare(b));
+const ichips=x=>`<div class="ing">${ilist(x).map((t,n)=>`<span class="ig">${ESC(t)}<button data-d="idel" data-ix="${n}" title="Remove" aria-label="Remove ${ESQ(t)}">&times;</button></span>`).join("")}</div><div class="ai"><input data-ing list="ingdl" placeholder="Add ingredient" aria-label="Add ingredient" autocomplete="off"><button class="ghost sm2" data-d="iadd">Add</button></div>`;
 function drows(){
  const q=df.q.toLowerCase(),r=dd.filter(x=>(!df.s||x.c==df.s)&&(!q||(x.n+" "+x.i).toLowerCase().includes(q)));
- $("#dbody").innerHTML=r.map(x=>`<tr data-k="${x.k}"><td><input data-f="n" value="${ESQ(x.n)}" aria-label="Dish name"></td><td><select data-f="c">${opt(Object.entries(SEC),x.c)}</select></td><td><input data-f="p" type="number" min="0" value="${+x.p||0}" aria-label="Price"></td><td><textarea data-f="i" rows="2" aria-label="Ingredients">${ESC(x.i)}</textarea></td><td><button class="ib" data-d="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-d="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="mu">No dishes match.</td></tr>`;
+ $("#dbody").innerHTML=r.map(x=>`<tr data-k="${x.k}"><td><input data-f="n" value="${ESQ(x.n)}" aria-label="Dish name"></td><td><select data-f="c">${opt(Object.entries(SEC),x.c)}</select></td><td><input data-f="p" type="number" min="0" value="${+x.p||0}" aria-label="Price"></td><td class="ic">${ichips(x)}</td><td><button class="ib" data-d="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-d="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="mu">No dishes match.</td></tr>`;
  $("#dcount").textContent=`${r.length} of ${dd.length} dishes`;
+ $("#ingdl").innerHTML=allIng().map(t=>`<option value="${ESQ(t)}">`).join("");
 }
 function dact(b){
  const a=b.dataset.d,tr=b.closest("tr"),i=tr?dd.findIndex(x=>x.k==tr.dataset.k):-1;
+ if(a=="iadd"||a=="idel"){const x=dd[i];if(!x)return;let L=ilist(x);
+  if(a=="idel")L.splice(+b.dataset.ix,1);
+  else{const inp=tr.querySelector("[data-ing]");inp.value.split(/[;,]/).map(t=>t.trim()).filter(Boolean).forEach(t=>{if(!L.some(y=>y.toLowerCase()==t.toLowerCase()))L.push(t)});inp.value=""}
+  x.i=L.join("; ");const td=tr.querySelector("td.ic");td.innerHTML=ichips(x);if(a=="iadd")td.querySelector("[data-ing]").focus();$("#ingdl").innerHTML=allIng().map(t=>`<option value="${ESQ(t)}">`).join("");dirty();return}
  if(a=="add"){df.q="";$("#dq").value="";dd.unshift({k:dk(),n:"",c:df.s||"pizza",p:0,i:""});drows();dirty();const f=$("#dbody input");f&&f.focus()}
  else if(a=="dup"&&i>=0){dd.splice(i+1,0,{...dd[i],k:dk(),n:dd[i].n+" (copy)"});drows();dirty()}
  else if(a=="del"&&i>=0){if(!confirm("Remove "+(dd[i].n||"this dish")+"?"))return;dd.splice(i,1);drows();dirty()}
@@ -568,32 +577,36 @@ root.oninput=e=>{const t=e.target,tr=t.closest&&t.closest("tr[data-k]"),Q=tab=="
  else if(t.id=="cq"){cf.q=t.value;clist()}
  else if(t.id=="tpq"){tf2.q=t.value;tbank()}
  else if(tr&&t.dataset.f&&L){const x=L.find(y=>y.k==tr.dataset.k);if(x){x[t.dataset.f]=t.value;Q?qdirty():dirty()}}
- else if(t.id=="dq"){if(Q){qf.q=t.value;qrows()}else{df.q=t.value;drows()}}};
+ else if(t.id=="dq"){if(Q){qf.q=t.value;qf.pg=0;qrows()}else{df.q=t.value;drows()}}};
 /* ---------- Questions table editor ---------- */
-let qd=null,qc=false,qf={q:"",s:""};
+let qd=null,qc=false,qf={q:"",s:"",pg:0,init:0};const QPS=25;
 const TOP=()=>Object.entries(CATS).filter(([k])=>k!="all");
 function qdirty(v=true){qc=v;dmsg(v?"You have unsaved changes.":"")}
 function questions(){
  if(!qd)qd=H.map(h=>{const w=h[3].split("|");return{k:dk(),c:h[0],q:h[1],a:h[2],w1:w[0]||"",w2:w[1]||"",w3:w[2]||"",e:h[4]||""}});
  app.innerHTML=`<p class="sub">Every question the app asks lives here. Edit, add or remove them, then click Save changes.</p>
  <div class="tb"><input id="dq" placeholder="Search questions" value="${ESQ(qf.q)}"><select id="ds"><option value="">All topics</option>${opt(TOP(),qf.s)}</select><button class="go sm2" data-qa="add">+ Add question</button><button class="go sm2 ok" data-qa="save">Save changes</button></div>
- <p class="sub" id="dmsg"></p><div class="tw"><table class="dt qt"><thead><tr><th>Topic</th><th>Question</th><th>Correct answer</th><th>Wrong 1</th><th>Wrong 2</th><th>Wrong 3</th><th>Explanation</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p>`;
- qrows();qc&&qdirty();
+ <p class="sub" id="dmsg"></p><div class="tw"><table class="dt qt"><thead><tr><th>Topic</th><th>Question</th><th>Correct answer</th><th>Wrong 1</th><th>Wrong 2</th><th>Wrong 3</th><th>Explanation</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p><div class="tb" id="qpg"></div>`;
+ if(!qf.init){qf.s=(TOP().find(([k])=>qd.some(x=>x.c==k))||[""])[0];qf.init=1}
+ $("#ds").value=qf.s;qrows();qc&&qdirty();
 }
 function qrows(){
  const q=qf.q.toLowerCase(),r=qd.filter(x=>(!qf.s||x.c==qf.s)&&(!q||[x.q,x.a,x.w1,x.w2,x.w3,x.e].join(" ").toLowerCase().includes(q))),
   ta=(f,v,n)=>`<td><textarea data-f="${f}" rows="${n||2}">${ESC(v)}</textarea></td>`;
- $("#dbody").innerHTML=r.map(x=>`<tr data-k="${x.k}"><td><select data-f="c">${opt(TOP(),x.c)}</select></td>${ta("q",x.q,3)}${ta("a",x.a)}${ta("w1",x.w1)}${ta("w2",x.w2)}${ta("w3",x.w3)}${ta("e",x.e,3)}<td><button class="ib" data-qa="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-qa="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="8" class="mu">No questions match.</td></tr>`;
+ const np=Math.max(1,Math.ceil(r.length/QPS));qf.pg=Math.min(Math.max(0,qf.pg),np-1);const pr=r.slice(qf.pg*QPS,qf.pg*QPS+QPS);
+ $("#dbody").innerHTML=pr.map(x=>`<tr data-k="${x.k}"><td><select data-f="c">${opt(TOP(),x.c)}</select></td>${ta("q",x.q,3)}${ta("a",x.a)}${ta("w1",x.w1)}${ta("w2",x.w2)}${ta("w3",x.w3)}${ta("e",x.e,3)}<td><button class="ib" data-qa="dup" title="Duplicate" aria-label="Duplicate">${ic("copy")}</button><button class="ib" data-qa="del" title="Delete" aria-label="Delete">${ic("trash")}</button></td></tr>`).join("")||`<tr><td colspan="8" class="mu">No questions match.</td></tr>`;
  $("#dcount").textContent=`${r.length} of ${qd.length} questions`;
+ $("#qpg").innerHTML=np>1?`<button class="ghost sm2" data-qa="prev"${qf.pg?"":" disabled"}>&#8592; Previous</button><span class="mu">Page ${qf.pg+1} of ${np}</span><button class="ghost sm2" data-qa="next"${qf.pg<np-1?"":" disabled"}>Next &#8594;</button>`:"";
 }
 function qact(b){
  const a=b.dataset.qa,tr=b.closest("tr"),i=tr?qd.findIndex(x=>x.k==tr.dataset.k):-1;
- if(a=="add"){qf.q="";$("#dq").value="";qd.unshift({k:dk(),c:qf.s||"pizza",q:"",a:"",w1:"",w2:"",w3:"",e:""});qrows();qdirty();const f=$("#dbody textarea");f&&f.focus()}
+ if(a=="prev"||a=="next"){qf.pg+=a=="next"?1:-1;qrows();scrollTo(0,0);return}
+ if(a=="add"){qf.q="";qf.pg=0;$("#dq").value="";qd.unshift({k:dk(),c:qf.s||"pizza",q:"",a:"",w1:"",w2:"",w3:"",e:""});qrows();qdirty();const f=$("#dbody textarea");f&&f.focus()}
  else if(a=="dup"&&i>=0){qd.splice(i+1,0,{...qd[i],k:dk()});qrows();qdirty()}
  else if(a=="del"&&i>=0){if(!confirm("Remove this question?"))return;qd.splice(i,1);qrows();qdirty()}
  else if(a=="save"){
   const bad=qd.find(x=>{const o=[x.a,x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean);return !x.q.trim()||!x.a.trim()||o.length<2||new Set(o.map(t=>t.toLowerCase())).size!=o.length||[x.a,x.w1,x.w2,x.w3].join("").includes("|")});
-  if(bad){qf={q:"",s:""};questions();const r=document.querySelector(`tr[data-k="${bad.k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}dmsg("Each question needs a question, a correct answer and at least one different wrong answer. Do not use the | character in answers.",1);return}
+  if(bad){qf={q:"",s:"",pg:Math.floor(qd.indexOf(bad)/QPS),init:1};questions();const r=document.querySelector(`tr[data-k="${bad.k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}dmsg("Each question needs a question, a correct answer and at least one different wrong answer. Do not use the | character in answers.",1);return}
   H=qd.map(x=>[x.c,x.q.trim(),x.a.trim(),[x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean).join("|"),x.e.trim()]);save();qdirty(false);dmsg("Saved "+H.length+" questions.");
  }
 }
@@ -825,7 +838,7 @@ function adm(b){const a=b.dataset.a;
 }
 root.onchange=e=>{
  if(e.target.id=="sel"){tick();ed[tab]=e.target.value;admin()}
- if(e.target.id=="ds"){if(tab=="q"){qf.s=e.target.value;qrows()}else{df.s=e.target.value;drows()}}
+ if(e.target.id=="ds"){if(tab=="q"){qf.s=e.target.value;qf.pg=0;qrows()}else{df.s=e.target.value;drows()}}
  if(e.target.id=="tf"){te.s=e.target.value;trows()}
  if(e.target.id=="cp2"){cf.p=e.target.value;clist()}
  if(e.target.dataset.cs){const c=CANDS.find(x=>x.id==e.target.dataset.cs);if(c){c.st=e.target.value;store.set("g250cand",JSON.stringify(CANDS))}}
@@ -872,7 +885,8 @@ root.onclick=e=>{const b=e.target.closest("button");if(!b)return;
  if(b.id=="go")start();else if(b.id=="tmt"){store.set("g250timed",timed()?"0":"1");home()}else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.id=="login")login();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;login()},800)}else if(b.id=="dologin")doLogin();else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.dataset.qa)qact(b);else if(b.dataset.ta)tact(b);else if(b.dataset.tpa)tpact(b);else if(b.dataset.cv!=null){cf.v=b.dataset.cv||null;cands()}else if(b.dataset.cx){if(confirm("Delete this candidate?")){CANDS=CANDS.filter(x=>x.id!=b.dataset.cx);store.set("g250cand",JSON.stringify(CANDS));cands()}}else if(b.dataset.r!=null){rp.u=b.dataset.r;reports()}else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
- if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
+ if(e.key=="Enter"&&e.target.dataset&&e.target.dataset.ing!=null){e.preventDefault();const bb=e.target.closest("tr").querySelector('[data-d="iadd"]');bb&&bb.click()}
+ else if(e.key=="Enter"&&$("#dologin")){e.preventDefault();if(!$("#dologin").disabled)doLogin()}
  else if(e.key=="Enter"&&$("#nx")){e.preventDefault();$("#nx").click()}
  else if(e.key=="Enter"&&$("#cnext")){e.preventDefault();if(!$("#cnext").disabled)$("#cnext").click()}
  else if("1234".includes(e.key)&&e.key){const o=document.querySelectorAll(".opt")[+e.key-1];if(o&&!o.disabled)o.click()}
