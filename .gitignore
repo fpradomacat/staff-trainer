@@ -39,3 +39,5 @@ pnpm-debug.log*
 # OS metadata
 .DS_Store
 Thumbs.db
+# Local content backups (private, do not publish)
+backup/

@@ -372,7 +372,7 @@ const ADM=[["q","Questions","questions"],["tp","Topics","topics"],["tm","Teams",
 function page(c){app=root;root.className=c||""}
 function main(){
  app.innerHTML=`<p class="sub">Choose your team to start a trivia round.</p>
- <div class="pf">${Object.entries(PROF).filter(([k])=>user.role=="admin"||!user.tm||user.tm==k).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
+ <div class="pf">${Object.entries(PROF).filter(([k])=>user.role=="admin"||!user.tm||user.tm==k).map(([k,v])=>`<button class="pc" data-p="${k}"><b class="t">${ESC(v.n)}</b><span>${ESC(v.d)}</span></button>`).join("")}</div>
  <button class="ghost" id="guide">Floor guide</button>`;
 }
 function enter(){
@@ -380,10 +380,10 @@ function enter(){
  const adm=user.role=="admin",it=(k,l,i)=>`<button class="ni" data-n="${k}">${ic(i)}<span>${l}</span></button>`;
  root.innerHTML=`<div id="shell"><aside id="sb"><div class="brand"><span class="bn t">250 Grammi</span><span class="mg t">250</span><small>Team Academy</small></div>
  <nav>${it("trivia","Trivia","trivia")}${it("reports","Reports","reports")}${adm?`<p class="ng">Content</p>`+ADM.map(x=>it(...x)).join(""):""}</nav>
- <div class="sbf"><div class="who"><b>${user.n}</b><small>${adm?"Administrator":"Trainee"}</small></div>
+ <div class="sbf"><div class="who"><b>${ESC(user.n)}</b><small>${adm?"Administrator":"Trainee"}</small></div>
  <button class="ni" id="snd">${ic("sound")}<span>Sound: ${snd?"on":"off"}</span></button><button class="ni" id="logout">${ic("logout")}<span>Logout</span></button></div></aside>
  <button id="sbk" aria-label="Close menu"></button>
- <div id="cvw"><header id="top"><button class="ib" id="tg" aria-label="Toggle menu">${ic("menu")}</button><h1 class="t" id="pt"></h1><span class="uc">${user.n}</span></header><main id="cv"></main></div></div>`;
+ <div id="cvw"><header id="top"><button class="ib" id="tg" aria-label="Toggle menu">${ic("menu")}</button><h1 class="t" id="pt"></h1><span class="uc">${ESC(user.n)}</span></header><main id="cv"></main></div></div>`;
  go("trivia");
 }
 function go(n){
@@ -433,15 +433,15 @@ function seedDemo(){
 const bestOf=k=>Math.max(0,...stats.filter(x=>user&&x.u==user.u&&x.p==prof&&x.c==k).map(x=>x.s));
 function home(){
  if(!PROF[prof])prof=Object.keys(PROF)[0];const P=PROF[prof];
- app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h2 class="t" style="margin:0">${P.n}</h2></div>
+ app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h2 class="t" style="margin:0">${ESC(P.n)}</h2></div>
  <p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
- <div class="chips">${["all",...tpcs(prof)].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${CATS[k]}${bestOf(k)?` <small>best ${bestOf(k)}</small>`:""}</button>`).join("")}</div>
+ <div class="chips">${["all",...tpcs(prof)].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${ESC(CATS[k])}${bestOf(k)?` <small>best ${bestOf(k)}</small>`:""}</button>`).join("")}</div>
  <button class="go" id="go">Start quiz</button><button class="ghost" id="tmt">Timed mode: ${timed()?"on ("+TLIM_QUIZ+" seconds per question)":"off"}</button>`;
 }
 function guide(){
  const sc=Object.keys(FL),own=t=>sc.filter(c=>FL[c].some(x=>x[0]==t));
  app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back">&#8592;</button><h1 class="t" style="font-size:28px;margin:0">Floor guide</h1></div>
- <p class="sub">Each tile shows the table number and how many people it seats.</p>`+sc.map(c=>`<div class="sc"><h3 class="t">${c}</h3><p class="mu">${FL[c].length} tables, ${FL[c].reduce((a,x)=>a+x[1],0)} seats</p><div class="tg">${FL[c].slice().sort((x,y)=>x[0]-y[0]).map(([t,n])=>`<div class="tt"><b class="t">${t}</b><span>${n} people</span>${own(t).length>1?`<small>also ${own(t).filter(x=>x!=c).join(", ")}</small>`:""}</div>`).join("")}</div></div>`).join("");
+ <p class="sub">Each tile shows the table number and how many people it seats.</p>`+sc.map(c=>`<div class="sc"><h3 class="t">${ESC(c)}</h3><p class="mu">${FL[c].length} tables, ${FL[c].reduce((a,x)=>a+x[1],0)} seats</p><div class="tg">${FL[c].slice().sort((x,y)=>x[0]-y[0]).map(([t,n])=>`<div class="tt"><b class="t">${t}</b><span>${n} people</span>${own(t).length>1?`<small>also ${ESC(own(t).filter(x=>x!=c).join(", "))}</small>`:""}</div>`).join("")}</div></div>`).join("");
 }
 const SEC={pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",dessert:"Desserts",bar:"Cocktails",spritz:"Spritzes"};
 let PROF={foh:{n:"Front of House",d:"Menu, service flow, floor, drinks and mise en place",t:["story","pizza","pasta","ante","mains","meat","dessert","offer","cheese","ital","set","up","gf","kids","flow","map","phr","wine","wsell","spritz","beer","dr","mise"]},
@@ -460,7 +460,6 @@ const SEED=JSON.stringify(getDB()),save=()=>store.set("g250db",JSON.stringify(ge
 async function init(){
  if(!PUB)try{const r=await fetch("data.json",{cache:"no-cache"});if(r.ok)PUB=await r.json()}catch(e){}
  if(PUB)setDB(PUB);
- const dbSaved=store.get("g250db");
  try{stats=JSON.parse(store.get("g250st")||"[]")}catch(e){stats=[]}
  try{const l=store.get("g250db");if(l)setDB(JSON.parse(l))}catch(e){}
  try{if(!store.get("g250hmig")){const have=new Set(H.map(h=>h[1])),miss2=JSON.parse(SEED).H.filter(h=>!have.has(h[1]));if(miss2.length){H=[...H,...miss2];save()}store.set("g250hmig","1")}}catch(e){}
@@ -492,7 +491,7 @@ function cstart(){
 function cshow(){
  const q=cd.q[cd.i],last=cd.i+1==cd.q.length;
  app.innerHTML=`<div class="top"><div class="bar"><i style="width:${cd.i/cd.q.length*100}%"></i></div><b>${cd.i+1}/${cd.q.length}</b></div>
-${tmHtml(TLIM_TEST)}<h3 class="q">${q.q}</h3><div>${q.o.map((o,k)=>`<button class="opt" data-ck="${k}"><span>${k+1}</span>${o}</button>`).join("")}</div>
+${tmHtml(TLIM_TEST)}<h3 class="q">${ESC(q.q)}</h3><div>${q.o.map((o,k)=>`<button class="opt" data-ck="${k}"><span>${k+1}</span>${ESC(o)}</button>`).join("")}</div>
  <button class="go" id="cnext" disabled>${last?"Submit":"Next"}</button>`;
  tmStart(()=>{if(cd.ans[cd.i]==null)cd.ans[cd.i]=-1;cnext()},TLIM_TEST);
 }
@@ -508,7 +507,7 @@ function cdone(){
  const sc=cd.q.filter((q,k)=>q.o[cd.ans[k]]==q.a).length,adm=user&&user.role=="admin";
  app.innerHTML=`<div class="flag"></div><div class="res"><div class="big">&#127881;</div><h2 class="t">Thank you, ${ESC(cd.n.split(" ")[0])}!</h2>
  <p class="sub">Your answers have been submitted. We will review them and get back to you by email soon.</p></div>
- ${adm?`<div class="rv"><b>Result (visible to admins only)</b><span>${sc} / ${cd.q.length}</span><small>${ESC(cd.n)}, ${ESC(cd.m)}, ${ESC(posN(cd.r))}</small></div>`+cd.q.map((q,k)=>{const ok=q.o[cd.ans[k]]==q.a;return `<div class="rv"><b>${ok?"Correct":"Wrong"}: ${q.q}</b><span>${q.a}</span>${ok?"":`<small>Their answer: ${q.o[cd.ans[k]]??"No answer (time ran out)"}</small>`}</div>`}).join(""):""}`;
+ ${adm?`<div class="rv"><b>Result (visible to admins only)</b><span>${sc} / ${cd.q.length}</span><small>${ESC(cd.n)}, ${ESC(cd.m)}, ${ESC(posN(cd.r))}</small></div>`+cd.q.map((q,k)=>{const ok=q.o[cd.ans[k]]==q.a;return `<div class="rv"><b>${ok?"Correct":"Wrong"}: ${ESC(q.q)}</b><span>${ESC(q.a)}</span>${ok?"":`<small>Their answer: ${ESC(q.o[cd.ans[k]]??"No answer (time ran out)")}</small>`}</div>`}).join(""):""}`;
  scrollTo(0,0);
 }
 function start(){
@@ -518,25 +517,11 @@ function start(){
  i=score=streak=0;miss=[];show()}
 
 /* ---------- Admin: edits are stored in this browser; export data.json to publish ---------- */
-const TABS={q:"Questions",d:"Dishes",f:"Floor",m:"Mise en place",flow:"Service flow",dict:"Dictionary",off:"Offers",x:"Data"};
-let tab="q",ed={q:"pizza",m:"foh"};
-const ESC=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"),cl=l=>l.split(/\t|\|/).map(x=>x.trim());
+let tab="q";
+const ESC=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 const opt=(o,cur)=>o.map(([k,v])=>`<option value="${k}"${k==cur?" selected":""}>${v}</option>`).join("");
-const ED={
- q:{sel:()=>opt(Object.entries(CATS).filter(([k])=>k!="all"),ed.q),hint:"One question per line: question | correct answer | wrong 1 | wrong 2 | wrong 3 | explanation. Rows pasted from Google Sheets also work (Auto rows are skipped).",
-  get:()=>H.filter(h=>h[0]==ed.q).map(h=>[h[1],h[2],...h[3].split("|").concat(["","",""]).slice(0,3),h[4]].join(" | ")),
-  set:L=>{const r=[];L.forEach(l=>{let c=cl(l);if(c[1]=="Auto")return;if(c.length>=8)c=c.slice(2);if(c.length>2)r.push([ed.q,c[0],c[1],c.slice(2,5).filter(Boolean).join("|"),c[5]||""])});H=H.filter(h=>h[0]!=ed.q).concat(r);return r.length+" questions saved."}},
- d:{hint:"One dish per line: name | section (Pizza, Pasta & Risotto, Starters, Mains & Sides, Desserts, Cocktails, Spritzes) | price (0 if none) | ingredient; ingredient; ...",
-  get:()=>D.map(d=>[d.n,SEC[d.c],d.p,d.i.join("; ")].join(" | ")),
-  set:L=>{const o=[],bad=[];L.forEach(l=>{const c=cl(l),k=Object.keys(SEC).find(k=>k==(c[1]||"").toLowerCase()||SEC[k].toLowerCase()==(c[1]||"").toLowerCase());if(c[0]&&k&&c[3])o.push({n:c[0],c:k,p:+c[2]||0,i:c[3].split(";").map(x=>x.trim()).filter(Boolean)});else bad.push(l.slice(0,28))});D=o;return o.length+" dishes saved."+(bad.length?" Skipped: "+bad.join(" / "):"")}},
- f:{hint:"One section per line: section | table:people, table:people, ... A table can be in two sections.",
-  get:()=>Object.entries(FL).map(([c,t])=>c+" | "+t.map(x=>x.join(":")).join(", ")),
-  set:L=>{const o={};L.forEach(l=>{const c=l.split("|"),t=(c[1]||"").split(",").map(x=>x.trim().split(":").map(Number)).filter(q=>q[0]&&q[1]);if(c[0].trim()&&t.length)o[c[0].trim()]=t});FL=o;return Object.keys(o).length+" sections saved."}},
- dict:{hint:"term | definition",get:()=>T.map(x=>x.join(" | ")),set:L=>{T=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return T.length+" terms saved."}},
- off:{hint:"dish | what to offer (Pepper, Parmigiano, Chilli oil, Nothing to offer...)",get:()=>O.map(x=>x.join(" | ")),set:L=>{O=L.map(cl).filter(c=>c[1]).map(c=>[c[0],c[1]]);return O.length+" rules saved."}}
-};
 let dd=null,dc=false,df={q:"",s:""};
-const dk=()=>Math.random().toString(36).slice(2),ESQ=t=>ESC(t).replace(/"/g,"&quot;");
+const dk=()=>Math.random().toString(36).slice(2),ESQ=ESC;
 function dmsg(t,bad){const m=$("#dmsg");if(m){m.textContent=t||"";m.className="sub"+(bad?" err":"")}}
 function dirty(v=true){dc=v;dmsg(v?"You have unsaved changes.":"")}
 function dishes(){
@@ -583,7 +568,7 @@ let qd=null,qc=false,qf={q:"",s:"",pg:0,init:0};const QPS=25;
 const TOP=()=>Object.entries(CATS).filter(([k])=>k!="all");
 function qdirty(v=true){qc=v;dmsg(v?"You have unsaved changes.":"")}
 function questions(){
- if(!qd)qd=H.map(h=>{const w=h[3].split("|");return{k:dk(),c:h[0],q:h[1],a:h[2],w1:w[0]||"",w2:w[1]||"",w3:w[2]||"",e:h[4]||""}});
+ if(!qd)qd=H.map(h=>{const w=h[3].split("|");return{k:dk(),q0:h[1],c:h[0],q:h[1],a:h[2],w1:w[0]||"",w2:w[1]||"",w3:w[2]||"",e:h[4]||""}});
  app.innerHTML=`<p class="sub">Every question the app asks lives here. Edit, add or remove them, then click Save changes.</p>
  <div class="tb"><input id="dq" placeholder="Search questions" value="${ESQ(qf.q)}"><select id="ds"><option value="">All topics</option>${opt(TOP(),qf.s)}</select><button class="go sm2" data-qa="add">+ Add question</button><button class="go sm2 ok" data-qa="save">Save changes</button></div>
  <p class="sub" id="dmsg"></p><div class="tw"><table class="dt qt"><thead><tr><th>Topic</th><th>Question</th><th>Correct answer</th><th>Wrong 1</th><th>Wrong 2</th><th>Wrong 3</th><th>Explanation</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div><p class="mu" id="dcount"></p><div class="tb" id="qpg"></div>`;
@@ -607,7 +592,14 @@ function qact(b){
  else if(a=="save"){
   const bad=qd.find(x=>{const o=[x.a,x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean);return !x.q.trim()||!x.a.trim()||o.length<2||new Set(o.map(t=>t.toLowerCase())).size!=o.length||[x.a,x.w1,x.w2,x.w3].join("").includes("|")});
   if(bad){qf={q:"",s:"",pg:Math.floor(qd.indexOf(bad)/QPS),init:1};questions();const r=document.querySelector(`tr[data-k="${bad.k}"]`);if(r){r.classList.add("bad");r.scrollIntoView({block:"center"})}dmsg("Each question needs a question, a correct answer and at least one different wrong answer. Do not use the | character in answers.",1);return}
-  H=qd.map(x=>[x.c,x.q.trim(),x.a.trim(),[x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean).join("|"),x.e.trim()]);save();qdirty(false);dmsg("Saved "+H.length+" questions.");
+  const ren=qd.filter(x=>x.q0&&x.q0!=x.q.trim());
+  H=qd.map(x=>[x.c,x.q.trim(),x.a.trim(),[x.w1,x.w2,x.w3].map(t=>t.trim()).filter(Boolean).join("|"),x.e.trim()]);
+  let tfx=0,tdr=0;
+  if(TPL.length){
+   ren.forEach(r=>TPL.forEach(t=>{if(t.q==r.q0){t.q=r.q.trim();t.c=r.c;tfx++}}));
+   const have=new Set(H.map(h=>h[1])),n0=TPL.length;TPL=TPL.filter(t=>have.has(t.q));tdr=n0-TPL.length}
+  save();qdirty(false);qd=qd.map(x=>({...x,q0:x.q.trim()}));
+  dmsg("Saved "+H.length+" questions."+(tfx?" Updated "+tfx+" in the candidate test template.":"")+(tdr?" Dropped "+tdr+" deleted question(s) from the candidate test template.":""));
  }
 }
 /* ---------- Answer options: always start with a capital letter ---------- */
@@ -723,7 +715,7 @@ function tplQuestions(){
   if(q)out.push(q)});
  return out}
 function qpool(){const out=[],seen=new Set();
- H.forEach(h=>{if(!seen.has(h[1])){seen.add(h[1]);out.push({w:1,c:h[0],q:h[1]})}});
+ H.forEach(h=>{if(!seen.has(h[1])){seen.add(h[1]);out.push({c:h[0],q:h[1]})}});
  return out}
 let tp=null,tpd=false,tpS=true,tpool=[],tf2={q:"",s:""};
 function tpl(){
@@ -733,8 +725,10 @@ function tpl(){
  <p class="sub" id="tmsg"></p><h3 class="t">In the test (<span id="tpn"></span>)</h3>
  <div class="tw"><table class="dt gt"><thead><tr><th>#</th><th>Question</th><th>Topic</th><th></th></tr></thead><tbody id="tsel"></tbody></table></div>
  <h3 class="t">Question bank</h3><div class="tb"><input id="tpq" placeholder="Search questions" value="${ESQ(tf2.q)}"><select id="tpt"><option value="">All topics</option>${opt(TOP(),tf2.s)}</select></div>
- <div class="tw"><table class="dt gt"><thead><tr><th>Question</th><th>Topic</th><th>Type</th><th></th></tr></thead><tbody id="tbank"></tbody></table></div><p class="mu" id="tbn"></p>`;
+ <div class="tw"><table class="dt gt"><thead><tr><th>Question</th><th>Topic</th><th></th></tr></thead><tbody id="tbank"></tbody></table></div><p class="mu" id="tbn"></p>`;
  tsel();tbank();
+ const miss=tp.filter(x=>!H.some(h=>h[1]==x.q));
+ if(miss.length)tmsg(miss.length+" question(s) in this template are no longer in the question bank and will be skipped. Remove them or add them again.",1);
 }
 function tsel(){
  $("#tpn").textContent=tp.length+" questions";
@@ -742,7 +736,7 @@ function tsel(){
 }
 function tbank(){
  const q=tf2.q.toLowerCase(),inT=new Set(tp.map(x=>x.q)),r=tpool.map((x,j)=>({...x,j})).filter(x=>(!tf2.s||x.c==tf2.s)&&(!q||x.q.toLowerCase().includes(q)));
- $("#tbank").innerHTML=r.slice(0,80).map(x=>`<tr><td>${ESC(x.q)}</td><td>${ESC(CATS[x.c]||x.c)}</td><td class="mu">${x.w?"Written":"Auto"}</td><td>${inT.has(x.q)?`<span class="mu">Added</span>`:`<button class="ghost sm2" data-tpa="add" data-j="${x.j}">Add</button>`}</td></tr>`).join("")||`<tr><td colspan="4" class="mu">No questions match.</td></tr>`;
+ $("#tbank").innerHTML=r.slice(0,80).map(x=>`<tr><td>${ESC(x.q)}</td><td>${ESC(CATS[x.c]||x.c)}</td><td>${inT.has(x.q)?`<span class="mu">Added</span>`:`<button class="ghost sm2" data-tpa="add" data-j="${x.j}">Add</button>`}</td></tr>`).join("")||`<tr><td colspan="4" class="mu">No questions match.</td></tr>`;
  $("#tbn").textContent=r.length>80?`Showing 80 of ${r.length}. Use search or the topic filter to narrow it down.`:`${r.length} questions`;
 }
 function tpact(b){
@@ -812,7 +806,7 @@ function rview(u){
  <div class="kp"><div><b>${S.r}</b><span>Rounds played</span></div><div><b>${S.p}%</b><span>Average score</span></div><div><b>${S.best}%</b><span>Best round</span></div><div><b>${S.t}</b><span>Questions answered</span></div></div>`+
  (S.r?`<h3 class="t">By topic</h3><div class="tw"><table class="dt gt"><thead><tr><th>Topic</th><th>Rounds</th><th>Accuracy</th></tr></thead><tbody>${Object.entries(bt).sort((x,y)=>pct(x[1].s,x[1].t)-pct(y[1].s,y[1].t)).map(([k,v])=>`<tr><td>${ESC(k)}</td><td>${v.n}</td><td>${pct(v.s,v.t)}% ${pbar(pct(v.s,v.t))}</td></tr>`).join("")}</tbody></table></div>
  <h3 class="t">Most missed questions</h3>${top.length?`<div class="tw"><table class="dt gt"><tbody>${top.map(([q,n])=>`<tr><td>${ESC(q)}</td><td style="width:90px">${n} time${n>1?"s":""}</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No missed questions. Great work!</p>`}
- <h3 class="t">Recent rounds</h3><div class="tw"><table class="dt gt"><thead><tr><th>Date</th><th>Team</th><th>Topic</th><th>Score</th></tr></thead><tbody>${R.slice(0,15).map(x=>`<tr><td>${fd(x.d)}</td><td>${(PROF[x.p]||{}).n||x.p}</td><td>${ESC(CATS[x.c]||x.c)}</td><td>${x.s}/${x.t} (${pct(x.s,x.t)}%)</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No rounds yet. Play a trivia round to see stats here.</p>`);
+ <h3 class="t">Recent rounds</h3><div class="tw"><table class="dt gt"><thead><tr><th>Date</th><th>Team</th><th>Topic</th><th>Score</th></tr></thead><tbody>${R.slice(0,15).map(x=>`<tr><td>${fd(x.d)}</td><td>${ESC((PROF[x.p]||{}).n||x.p)}</td><td>${ESC(CATS[x.c]||x.c)}</td><td>${x.s}/${x.t} (${pct(x.s,x.t)}%)</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No rounds yet. Play a trivia round to see stats here.</p>`);
 }
 function admin(){
  if(!user||user.role!="admin")return;
@@ -821,23 +815,18 @@ function admin(){
  if(tab=="tpl")return tpl();
  if(tab=="q")return questions();
  if(TC[tab])return table(tab);
- const e=ED[tab];
  app.innerHTML=`
  <p class="sub">Edits are saved in this browser only. Use the Data tab to export and publish them.</p>
  
- ${tab=="x"?`<p class="sub">${D.length} dishes, ${H.length} written questions, ${Object.keys(FL).length} sections. ${store.get("g250db")?"This browser has local edits.":"No local edits."}</p>
+ <p class="sub">${D.length} dishes, ${H.length} written questions, ${Object.keys(FL).length} sections. ${store.get("g250db")?"This browser has local edits.":"No local edits."}</p>
  <button class="go" data-a="exp">Export data.json</button><label class="ghost" style="text-align:center">Import data.json<input id="imp" type="file" accept=".json" hidden></label><button class="ghost" data-a="disc">Discard local edits</button>
- <p class="soon">Candidate test link: your site URL followed by <a href="#/test" style="color:#f2c14e">#/test</a></p><p class="soon">To publish: put the exported data.json next to build.js and run the build. It is embedded in dist/index.html.</p>`
- :`${e.sel?`<select id="sel">${e.sel()}</select>`:""}<p class="sub">${e.hint}</p><textarea id="ta" spellcheck="false">${ESC(e.get().join("\n"))}</textarea><button class="go" data-a="save">Save</button><p id="msg" class="sub"></p>`}`;
+ <p class="soon">Candidate test link: your site URL followed by <a href="#/test" style="color:#f2c14e">#/test</a></p><p class="soon">To publish: put the exported data.json next to build.js and run the build. It is embedded in dist/index.html.</p>`;
 }
 function adm(b){const a=b.dataset.a;
- if(a.startsWith("t:")){tab=a.slice(2);admin()}
- else if(a=="save"){const m=ED[tab].set($("#ta").value.split("\n").map(x=>x.trim()).filter(Boolean));save();$("#msg").textContent=m}
- else if(a=="exp"){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([JSON.stringify(getDB(),null,1)],{type:"application/json"}));l.download="data.json";l.click()}
+ if(a=="exp"){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([JSON.stringify(getDB(),null,1)],{type:"application/json"}));l.download="data.json";l.click()}
  else if(a=="disc"){store.set("g250db","");setDB(JSON.parse(PUB?JSON.stringify(PUB):SEED));admin()}
 }
 root.onchange=e=>{
- if(e.target.id=="sel"){tick();ed[tab]=e.target.value;admin()}
  if(e.target.id=="ds"){if(tab=="q"){qf.s=e.target.value;qf.pg=0;qrows()}else{df.s=e.target.value;drows()}}
  if(e.target.id=="tf"){te.s=e.target.value;trows()}
  if(e.target.id=="cp2"){cf.p=e.target.value;clist()}
@@ -859,8 +848,8 @@ function show(){
  const q=qs[i];
  app.innerHTML=`<div class="top"><button class="x" id="home" aria-label="Quit quiz">&#10005;</button><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><b>${i+1}/${qs.length}</b></div>
  <div class="meta">Score ${score}${streak>1?` - ${streak} in a row!`:""}</div>${timed()?tmHtml(TLIM_QUIZ):""}
- <h3 class="q">${q.q}</h3>
- <div>${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span>${k+1}</span>${o}</button>`).join("")}</div><div id="fb"></div>`;
+ <h3 class="q">${ESC(q.q)}</h3>
+ <div>${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span>${k+1}</span>${ESC(o)}</button>`).join("")}</div><div id="fb"></div>`;
  if(timed())tmStart(()=>ans(-1),TLIM_QUIZ);else tmStop();
 }
 function ans(k){
@@ -868,7 +857,7 @@ function ans(k){
  const ok=q.o[k]==q.a;beep(ok);
  document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(q.o[j]==q.a)b.classList.add("ok");else if(j==k)b.classList.add("bad")});
  if(ok){score++;streak++}else{streak=0;miss.push(q)}
- $("#fb").innerHTML=`<div class="fb ${ok?"ok":"bad"}"><b>${ok?R(["Perfetto!","Bravo!","Esatto!","Delizioso!"]):k<0?"Time is up!":"Not quite."}</b><p>${ok?"":`The answer is ${q.a}. `}${q.e}</p></div><button class="go" id="nx">${i+1<qs.length?"Next question":"See results"}</button>`;
+ $("#fb").innerHTML=`<div class="fb ${ok?"ok":"bad"}"><b>${ok?R(["Perfetto!","Bravo!","Esatto!","Delizioso!"]):k<0?"Time is up!":"Not quite."}</b><p>${ok?"":`The answer is ${ESC(q.a)}. `}${ESC(q.e)}</p></div><button class="go" id="nx">${i+1<qs.length?"Next question":"See results"}</button>`;
  $("#nx").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function end(){
@@ -877,7 +866,7 @@ function end(){
  const p=score/qs.length,b=Math.max(0,...stats.slice(0,-1).filter(x=>x.u==user.u&&x.p==prof&&x.c==cat).map(x=>x.s));
  app.innerHTML=`<div class="res"><div class="big">${p==1?"&#127942;":p>=.7?"&#127837;":p>=.4?"&#127829;":"&#128214;"}</div><h2 class="t">${score} / ${qs.length}</h2>
  <p class="sub">${p==1?"Perfetto! You know this one cold.":p>=.7?"Great round. Almost there.":p>=.4?"Good start. Review and go again.":"Keep studying. It gets easier."}${score>b&&b?" New personal best!":""}</p>
- ${miss.length?`<h3 class="t">Review</h3>`+miss.map(q=>`<div class="rv"><b>${q.q}</b><span>${q.a}</span><small>${q.e}</small></div>`).join(""):""}
+ ${miss.length?`<h3 class="t">Review</h3>`+miss.map(q=>`<div class="rv"><b>${ESC(q.q)}</b><span>${ESC(q.a)}</span><small>${ESC(q.e)}</small></div>`).join(""):""}
  <button class="go" id="go">Play again</button><button class="ghost" id="home">Back to topics</button></div>`;
  scrollTo(0,0);
 }
