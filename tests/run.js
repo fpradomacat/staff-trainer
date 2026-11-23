@@ -1,8 +1,8 @@
-// Red de seguridad minima, sin dependencias:  node tests/run.js   (o npm test)
+// Minimal safety net, no dependencies:  node tests/run.js   (or npm test)
 //
-// La app es un solo index.html con un <script> inline. Este runner extrae ese script,
-// lo ejecuta en Node con stubs de DOM/localStorage y comprueba invariantes que ya se
-// rompieron una vez. No pretende cubrir la UI: cubre lo que falla en silencio.
+// The app is a single index.html with one inline <script>. This runner extracts that
+// script, executes it in Node against DOM and localStorage stubs, and checks invariants
+// that have broken before. It does not try to cover the UI: it covers what fails silently.
 const fs = require("fs");
 const path = require("path");
 
@@ -11,55 +11,68 @@ const SCRIPT_RE = /<script\b(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi;
 
 const EXPORTS = `
 ;globalThis.__APP={
- get H(){return H}, get D(){return D}, get CATS(){return CATS},
+ get H(){return H}, get D(){return D}, get T(){return T}, get W(){return W},
+ get PR(){return PR}, get CATS(){return CATS}, get USERS(){return USERS},
  get TPL(){return TPL}, set TPL(v){TPL=v},
- set user(v){user=v}, set cat(v){cat=v}, set prof(v){prof=v},
+ set user(v){user=v}, set cat(v){cat=v}, set prof(v){prof=v}, set tab(v){tab=v}, set nav(v){nav=v},
  get qs(){return qs}, set qs(v){qs=v}, set i(v){i=v}, set score(v){score=v},
- set miss(v){miss=v}, set cd(v){cd=v},
- get qd(){return qd},
- set tab(v){tab=v}, set nav(v){nav=v},
- ESC, fin, gen, defTpl, tplQuestions, questions, qact, show, ans, end, cshow,
- admin, main, home, guide, reports, cand,
- get html(){return globalThis.__HTML}
+ set miss(v){miss=v}, set cd(v){cd=v}, get qd(){return qd}, get rf(){return rf},
+ ESC, fin, gen, defTpl, tplQuestions, questions, qact, dishes, dact,
+ show, ans, end, cshow, cdone,
+ admin, main, home, guide, reports, cand, landing, menu, menuRows, words, service, wines
 };
 `;
 
-function load() {
+function load(opts = {}) {
   const src = fs.readFileSync(FILE, "utf8");
   const found = [...src.matchAll(SCRIPT_RE)];
-  if (found.length !== 1) throw new Error("se esperaba 1 script inline, hay " + found.length);
+  if (found.length !== 1) throw new Error("expected 1 inline script, found " + found.length);
   const code = found[0][1].replace(/\n\s*init\(\);\s*$/, "\n") + EXPORTS;
 
   const store = {};
-  globalThis.__HTML = "";
-  const el = () => ({
-    style: {}, dataset: {}, value: "", textContent: "", checked: false,
-    classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
-    querySelector: () => el(), querySelectorAll: () => [], closest: () => null,
-    focus() {}, click() {}, scrollIntoView() {}, appendChild() {},
-    get parentNode() { return el(); }, offsetWidth: 0,
-    set innerHTML(v) { globalThis.__HTML = v; },
-    get innerHTML() { return globalThis.__HTML; },
-  });
+  let last = "", all = "";
+  const els = {};
+  const make = () => {
+    const e = {
+      style: {}, dataset: {}, value: "", textContent: "", checked: false, className: "",
+      classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+      querySelector: () => make(), querySelectorAll: () => [], closest: () => null,
+      focus() {}, click() {}, scrollIntoView() {}, appendChild() {},
+      get parentNode() { return make(); }, offsetWidth: 0,
+      set innerHTML(v) { last = v; all += "\n" + v; },
+      get innerHTML() { return last; },
+    };
+    return e;
+  };
+  // Memoised per selector, so a test can read what the app wrote into #dmsg, #rn, etc.
+  const bySel = (s) => (els[s] = els[s] || make());
+
   globalThis.document = {
-    querySelector: () => el(), querySelectorAll: () => [], getElementById: () => null,
-    addEventListener() {}, createElement: () => el(), body: el(),
+    querySelector: bySel, querySelectorAll: () => [], getElementById: () => null,
+    addEventListener() {}, createElement: () => make(), body: make(),
   };
   globalThis.localStorage = {
     getItem: (k) => (k in store ? store[k] : null),
-    setItem: (k, v) => { store[k] = String(v); },
+    setItem: (k, v) => {
+      if (opts.breakStorage) throw new Error("QuotaExceededError (simulated)");
+      store[k] = String(v);
+    },
     removeItem: (k) => { delete store[k]; },
   };
   globalThis.addEventListener = () => {};
   globalThis.matchMedia = () => ({ matches: false });
-  globalThis.location = { hash: "" };
+  globalThis.location = { hash: "", reload() {} };
   globalThis.scrollTo = () => {};
   globalThis.alert = () => {};
   globalThis.confirm = () => true;
   globalThis.window = globalThis;
 
   new Function(code)();
-  return globalThis.__APP;
+  const app = globalThis.__APP;
+  Object.defineProperty(app, "html", { get: () => last });
+  Object.defineProperty(app, "allHtml", { get: () => all });
+  app.text = (sel) => (els[sel] ? els[sel].textContent : null);
+  return app;
 }
 
 let pass = 0, fail = 0;
@@ -78,60 +91,141 @@ const EVIL = {
 };
 const raw = (html) => html.includes("<b>fresca</b>") || html.includes("<i>clasica</i>") || html.includes("<script>");
 
-console.log("\nEstructura del archivo");
-test("index.html tiene exactamente un <script> inline", () => {
+console.log("\nFile structure");
+test("index.html holds exactly one inline <script>", () => {
   const found = [...fs.readFileSync(FILE, "utf8").matchAll(SCRIPT_RE)];
-  eq(found.length, 1, "scripts inline encontrados");
+  eq(found.length, 1, "inline scripts found");
 });
-test('conserva el anclaje "let PUB=null;" que usa build.js', () => {
-  ok(/let\s+PUB\s*=\s*null\s*;/.test(fs.readFileSync(FILE, "utf8")), "build.js no podria embeber data.json");
+test('keeps the "let PUB=null;" anchor build.js injects into', () => {
+  ok(/let\s+PUB\s*=\s*null\s*;/.test(fs.readFileSync(FILE, "utf8")), "build.js could not embed data.json");
 });
 
-console.log("\nEscapado de texto");
-test("ESC escapa & < > \" '", () => {
+console.log("\nText escaping");
+test("ESC escapes & < > \" '", () => {
   const A = load();
   eq(A.ESC('<a href="x">&\'</a>'), "&lt;a href=&quot;x&quot;&gt;&amp;&#39;&lt;/a&gt;", "ESC");
 });
-test("show() no inyecta HTML de la pregunta ni de las opciones", () => {
+test("show() does not inject HTML from the question or the options", () => {
   const A = load();
-  A.H.length = 0;
-  A.H.push(["pizza", EVIL.q, EVIL.a, EVIL.w, EVIL.e]);
-  A.cat = "pizza"; A.prof = "foh";
   A.qs = [{ q: EVIL.q, a: EVIL.a, w: EVIL.w.split("|"), e: EVIL.e, o: [EVIL.a, "B", "C", "D"] }];
   A.i = 0; A.score = 0;
   A.show();
-  ok(!raw(A.html), "show() dejo HTML crudo:\n          " + A.html.slice(0, 200));
+  ok(!raw(A.html), "show() left raw HTML:\n          " + A.html.slice(0, 200));
 });
-test("ans() no inyecta HTML de la explicacion ni de la respuesta", () => {
+test("ans() does not inject HTML from the explanation or the answer", () => {
   const A = load();
   A.qs = [{ q: EVIL.q, a: EVIL.a, w: [], e: EVIL.e, o: [EVIL.a, "B"] }];
   A.i = 0; A.score = 0; A.miss = [];
   A.ans(1);
-  ok(!raw(A.html), "ans() dejo HTML crudo:\n          " + A.html.slice(0, 200));
+  ok(!raw(A.html), "ans() left raw HTML:\n          " + A.html.slice(0, 200));
 });
-test("end() no inyecta HTML en el repaso de falladas", () => {
+test("end() does not inject HTML into the missed-questions review", () => {
   const A = load();
   A.user = { u: "test", n: "Test", role: "user" };
   A.qs = [{ q: EVIL.q, a: EVIL.a, w: [], e: EVIL.e, o: [EVIL.a, "B"] }];
   A.i = 0; A.score = 0;
   A.miss = [{ q: EVIL.q, a: EVIL.a, e: EVIL.e }];
   A.end();
-  ok(!raw(A.html), "end() dejo HTML crudo:\n          " + A.html.slice(0, 200));
+  ok(!raw(A.html), "end() left raw HTML:\n          " + A.html.slice(0, 200));
 });
-test("cshow() no inyecta HTML en el test de candidatos", () => {
+test("cshow() does not inject HTML into the candidate test", () => {
   const A = load();
   A.cd = { n: "X", m: "x@y.z", r: "foh", ans: [], i: 0, q: [{ q: EVIL.q, a: EVIL.a, e: EVIL.e, o: [EVIL.a, "B"] }] };
   A.cshow();
-  ok(!raw(A.html), "cshow() dejo HTML crudo:\n          " + A.html.slice(0, 200));
+  ok(!raw(A.html), "cshow() left raw HTML:\n          " + A.html.slice(0, 200));
+});
+test("the reference screens do not inject HTML from the content", () => {
+  const A = load();
+  A.user = { u: "test", n: "Test", role: "admin" };
+  A.D.length = 0;
+  A.D.push({ n: "Pizza <b>fresca</b>", c: "pizza", p: 10, i: ["<i>clasica</i>", "basil"] });
+  A.T.length = 0; A.T.push(["<b>fresca</b>", "<i>clasica</i>"]);
+  A.W.length = 0; A.W.push(["<b>fresca</b>", "<i>clasica</i>", "notas", "pitch", "ocasion"]);
+  A.menu(); ok(!raw(A.allHtml), "menu() left raw HTML");
+  A.words(); ok(!raw(A.allHtml), "words() left raw HTML");
+  A.wines(); ok(!raw(A.allHtml), "wines() left raw HTML");
 });
 
-console.log("\nPlantilla del test de candidatos");
-test("la plantilla por defecto resuelve todas sus preguntas", () => {
+console.log("\nReference screens");
+test("the menu lists every dish, grouped by section", () => {
   const A = load();
-  const def = A.defTpl().length, res = A.tplQuestions().length;
-  eq(res, def, "defTpl() propone preguntas que no existen en el banco");
+  A.user = { u: "test", n: "Test", role: "user", tm: "foh" };
+  A.menu();
+  eq(A.text("#rn"), A.D.length + " dishes", "the counter does not match");
+  ok(A.allHtml.includes("Margherita"), "a known dish is missing");
 });
-test("renombrar una pregunta la mantiene en la plantilla", () => {
+test("the menu filters by ingredient", () => {
+  const A = load();
+  A.user = { u: "test", n: "Test", role: "user", tm: "foh" };
+  A.menu();
+  A.rf.menu = "prawn";
+  A.menuRows();
+  const esperados = A.D.filter((d) => (d.n + " " + d.i.join(" ")).toLowerCase().includes("prawn")).length;
+  ok(esperados > 0, "no dish in the fixture contains prawn");
+  eq(A.text("#rn"), `${esperados} of ${A.D.length} dishes match "prawn"`, "the filter result does not match");
+});
+test("a bar trainee does not see another team's procedures", () => {
+  const A = load();
+  A.user = { u: "josefa", n: "Josefa", role: "user", tm: "bar" };
+  A.service();
+  const otros = A.PR.filter((p) => p.tm.length && !p.tm.includes("bar"));
+  ok(otros.length > 0, "there are no other teams' procedures to check against");
+  otros.forEach((p) => ok(!A.allHtml.includes(p.n), "another team's procedure is showing: " + p.n));
+});
+test("the wines screen shows the notes that were unreachable before", () => {
+  const A = load();
+  A.user = { u: "test", n: "Test", role: "user", tm: "foh" };
+  A.wines();
+  ok(A.W.length > 0, "no wines loaded");
+  A.W.forEach((w) => ok(A.allHtml.includes(A.ESC(w[0])), "missing wine: " + w[0]));
+});
+
+console.log("\nProfile picker");
+test("the landing screen offers one profile per user and no password field", () => {
+  const A = load();
+  A.landing();
+  const h = A.html;
+  Object.values(A.USERS).forEach((a) => ok(h.includes(A.ESC(a.n)), "missing user: " + a.n));
+  ok(!/type="password"/.test(h), "there is still a password field");
+  ok(!/id="dologin"/.test(h), "there is still a sign-in button");
+});
+test("the user model no longer stores passwords", () => {
+  const A = load();
+  const conPass = Object.entries(A.USERS).filter(([, a]) => a.p !== undefined);
+  eq(conPass.length, 0, "users carrying a password: " + conPass.map(([k]) => k).join(", "));
+});
+
+console.log("\nSaving cannot lie");
+test("when localStorage fails, Admin does not claim it saved", () => {
+  const A = load({ breakStorage: true });
+  A.user = { u: "admin", n: "Admin", role: "admin" };
+  A.dishes();
+  A.dact({ dataset: { d: "save" }, closest: () => null });
+  const m = A.text("#dmsg") || "";
+  ok(/could not save/i.test(m), 'the message should report the failure, it says: "' + m + '"');
+  ok(!/^Saved /.test(m), "it claims it saved when it did not");
+});
+test("when localStorage fails, the candidate test does not claim submission", () => {
+  const A = load({ breakStorage: true });
+  A.cd = { n: "Ana Perez", m: "a@b.co", r: "foh", ans: [0], i: 1, q: [{ q: "P", a: "A", e: "", o: ["A", "B"] }] };
+  A.cdone();
+  ok(!/have been submitted/.test(A.html), "it tells the candidate it was submitted when nothing was stored");
+  ok(/could not be stored/i.test(A.html), "it does not report the failure");
+});
+test("when localStorage works, Admin confirms the save", () => {
+  const A = load();
+  A.user = { u: "admin", n: "Admin", role: "admin" };
+  A.dishes();
+  A.dact({ dataset: { d: "save" }, closest: () => null });
+  ok(/^Saved \d+ dishes\./.test(A.text("#dmsg") || ""), "no confirmation: " + A.text("#dmsg"));
+});
+
+console.log("\nCandidate test template");
+test("the default template resolves every one of its questions", () => {
+  const A = load();
+  eq(A.tplQuestions().length, A.defTpl().length, "defTpl() proposes questions that are not in the bank");
+});
+test("renaming a question keeps it in the template", () => {
   const A = load();
   A.questions();
   const row = A.qd.find((x) => x.c === "story");
@@ -139,66 +233,66 @@ test("renombrar una pregunta la mantiene en la plantilla", () => {
   A.TPL = [{ c: "story", q: before }];
   row.q = before + " (reformulada)";
   A.qact({ dataset: { qa: "save" }, closest: () => null });
-  eq(A.TPL.length, 1, "la plantilla perdio la pregunta");
-  eq(A.TPL[0].q, before + " (reformulada)", "la plantilla no siguio el renombre");
-  ok(A.H.some((h) => h[1] === before + " (reformulada)"), "H no guardo el nuevo enunciado");
+  eq(A.TPL.length, 1, "the template lost the question");
+  eq(A.TPL[0].q, before + " (reformulada)", "the template did not follow the rename");
+  ok(A.H.some((h) => h[1] === before + " (reformulada)"), "H did not store the new wording");
 });
-test("borrar una pregunta la saca de la plantilla", () => {
+test("deleting a question removes it from the template", () => {
   const A = load();
   A.questions();
   const row = A.qd.find((x) => x.c === "story");
   A.TPL = [{ c: "story", q: row.q0 }];
   A.qd.splice(A.qd.indexOf(row), 1);
   A.qact({ dataset: { qa: "save" }, closest: () => null });
-  eq(A.TPL.length, 0, "la plantilla quedo apuntando a una pregunta inexistente");
+  eq(A.TPL.length, 0, "the template still points at a question that no longer exists");
 });
 
-console.log("\nTodas las pantallas renderizan");
-const ADMIN_TABS = [["q","Questions"],["tp","Topics"],["tm","Teams"],["pr","Procedures"],["d","Dishes"],
-  ["f","Floor"],["dict","Dictionary"],["off","Offers"],["u","Users"],["cand","Candidates"],
-  ["tpl","Test template"],["x","Data"]];
-ADMIN_TABS.forEach(([t, label]) => {
+console.log("\nEvery screen renders");
+[["q","Questions"],["tp","Topics"],["tm","Teams"],["pr","Procedures"],["d","Dishes"],
+ ["f","Floor"],["dict","Dictionary"],["off","Offers"],["u","Users"],["cand","Candidates"],
+ ["tpl","Test template"],["x","Data"]].forEach(([t, label]) => {
   test("Admin > " + label, () => {
     const A = load();
-    A.user = { u: "admin", n: "Admin", role: "admin", p: "admin" };
+    A.user = { u: "admin", n: "Admin", role: "admin" };
     A.tab = t; A.nav = t;
     A.admin();
     const h = A.html || "";
-    ok(h.length > 0, "render vacio");
-    ok(!/\bundefined\b/.test(h), "el HTML contiene 'undefined'");
-    ok(!/\[object Object\]/.test(h), "el HTML contiene [object Object]");
+    ok(h.length > 0, "empty render");
+    ok(!/\bundefined\b/.test(h), "the HTML contains 'undefined'");
+    ok(!/\[object Object\]/.test(h), "the HTML contains [object Object]");
   });
 });
-[["main","Elegir equipo"],["home","Temas"],["guide","Guia de salon"],["reports","Reportes"],["cand","Test de candidato"]]
+[["landing","Landing"],["main","Pick a team"],["home","Topics"],["menu","Menu"],["words","Italian words"],
+ ["service","Service & prep"],["wines","Wines"],["guide","Floor"],["reports","Reports"],["cand","Candidate test"]]
   .forEach(([fn, label]) => {
-    test("Pantalla: " + label, () => {
+    test("Screen: " + label, () => {
       const A = load();
-      A.user = { u: "test", n: "Test user", role: "user", p: "test" };
+      A.user = { u: "test", n: "Test user", role: "user", tm: "foh" };
       A.prof = "foh";
       A[fn]();
-      const h = A.html || "";
-      ok(h.length > 0, "render vacio");
-      ok(!/\bundefined\b/.test(h), "el HTML contiene 'undefined'");
+      const h = A.allHtml || "";
+      ok(h.length > 0, "empty render");
+      ok(!/\bundefined\b/.test(h), "the HTML contains 'undefined'");
+      ok(!/\[object Object\]/.test(h), "the HTML contains [object Object]");
     });
   });
 
-console.log("\nSanidad del contenido");
-test("ninguna pregunta se descarta sola al armar una ronda", () => {
+console.log("\nContent sanity");
+test("no question is silently dropped when a round is built", () => {
   const A = load();
-  // start() filtra en silencio las preguntas con opciones repetidas o sin la correcta.
   const bad = A.H.map((h) => ({ q: h[1], a: h[2], w: h[3].split("|").filter(Boolean), e: h[4] }))
     .map(A.fin)
     .filter((q) => {
       const o = [q.a, ...q.w];
       return o.length < 2 || new Set(o).size !== o.length || !o.includes(q.a);
     });
-  eq(bad.length, 0, "preguntas que el quiz descartaria: " + bad.slice(0, 3).map((q) => q.q).join(" / "));
+  eq(bad.length, 0, "questions the quiz would drop: " + bad.slice(0, 3).map((q) => q.q).join(" / "));
 });
-test("todos los temas con preguntas estan declarados en CATS", () => {
+test("every topic that has questions is declared in CATS", () => {
   const A = load();
   const huerfanos = [...new Set(A.H.map((h) => h[0]))].filter((t) => !A.CATS[t]);
-  eq(huerfanos.length, 0, "temas sin nombre: " + huerfanos.join(", "));
+  eq(huerfanos.length, 0, "topics with no name: " + huerfanos.join(", "));
 });
 
-console.log(`\n${pass} pasaron, ${fail} fallaron\n`);
+console.log(`\n${pass} passed, ${fail} failed\n`);
 process.exit(fail ? 1 : 0);
