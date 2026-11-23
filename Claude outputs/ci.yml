@@ -1,0 +1,91 @@
+# What this does, in one line: on every push it installs, tests and builds the app,
+# and when the push is on master it publishes dist/ to GitHub Pages.
+#
+# Vocabulary, because the names are not obvious the first time:
+#   workflow = this file. A repo can have several, all under .github/workflows/
+#   event    = what starts it (the "on:" block below)
+#   job      = a set of steps that run together on a fresh virtual machine
+#   step     = one command ("run:") or one reusable action ("uses:")
+#   artifact = files a job produces and hands to another job
+#
+# Each job gets its own clean machine, which is why "deploy" cannot see the dist/
+# folder that "build" produced — it has to travel between them as an artifact.
+
+name: Build, test and deploy
+
+on:
+  # Every push, on any branch. Only master actually deploys (see the "if" below),
+  # so a feature branch still gets tested without publishing anything.
+  push:
+  # Adds a "Run workflow" button on the Actions tab, handy for retrying a deploy.
+  workflow_dispatch:
+
+# Least privilege by default: the token can read the repo and nothing else.
+# The deploy job asks for more, for itself only.
+permissions:
+  contents: read
+
+# Two pushes in a row queue up instead of racing each other to publish.
+# cancel-in-progress stays false on purpose: cancelling a deployment halfway is worse
+# than waiting for it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # Caches ~/.npm between runs, keyed off package-lock.json.
+          cache: npm
+
+      # npm ci installs exactly what package-lock.json pins, and fails if the lock
+      # file and package.json disagree. That is what you want in CI; npm install
+      # would quietly "fix" the lock file instead.
+      - name: Install dependencies
+        run: npm ci
+
+      # tests/run.js needs no dependencies at all, so this would pass even without
+      # the step above. It runs after it anyway, so a broken lock file fails here too.
+      - name: Run the test suite
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      # Packs dist/ into an artifact named github-pages, which is the exact name
+      # the deploy action looks for.
+      - name: Upload dist/ as the Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    # Only the default branch gets published.
+    if: github.ref == 'refs/heads/master'
+    # Waits for build, and does not run at all if build failed. This is also what
+    # tells the deploy action that an artifact is on its way.
+    needs: build
+    runs-on: ubuntu-latest
+    # Pages deployment needs these two, and nothing else does.
+    permissions:
+      pages: write
+      id-token: write
+    # Makes the live URL show up on the run page and in the repo's Environments tab.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

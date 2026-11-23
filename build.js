@@ -1,8 +1,7 @@
 // Usage:
 //   npm install
-//   npm run build        -> dist/index.html (obfuscated + minified, harder to read)
-//   npm run build:min    -> dist/index.html (minified only, smaller, easier to read)
-//   npm test             -> runs tests/run.js against index.html
+//   npm run build   -> dist/index.html (minified)
+//   npm test        -> tests/run.js
 //
 // If data.json sits next to this file (exported from Admin > Data), its contents are
 // embedded into the bundle so the published app ships with that content already loaded.
@@ -10,11 +9,9 @@
 // broken JavaScript is worse than no build at all.
 const fs = require("fs");
 const path = require("path");
-const JO = require("javascript-obfuscator");
 const { minify: terser } = require("terser");
 const { minify: htmlMin } = require("html-minifier-terser");
 
-const light = process.argv.includes("--light");
 const ROOT = __dirname;
 const SRC = path.join(ROOT, "index.html");
 const DATA = path.join(ROOT, "data.json");
@@ -75,31 +72,10 @@ const kb = (n) => (n / 1024).toFixed(1) + " KB";
   }
 
   // Wrap in an IIFE so every identifier can be renamed safely.
-  let js = "(function(){" + code + "\n})();";
-
-  if (light) {
-    const r = await terser(js, { compress: true, mangle: true });
-    if (!r.code) die("terser returned no code.");
-    js = r.code;
-  } else {
-    js = JO.obfuscate(js, {
-      compact: true,
-      identifierNamesGenerator: "hexadecimal",
-      stringArray: true,
-      stringArrayThreshold: 1,
-      stringArrayEncoding: ["base64"],
-      rotateStringArray: true,
-      shuffleStringArray: true,
-      splitStrings: true,
-      splitStringsChunkLength: 8,
-      disableConsoleOutput: true,
-      // Heavier options make the file much bigger and slower on phones.
-      controlFlowFlattening: false,
-      deadCodeInjection: false,
-      selfDefending: false,
-    }).getObfuscatedCode();
-  }
-  if (!js || js.length < 1000) die("the generated JavaScript is suspiciously small (" + js.length + " chars).");
+  const r = await terser("(function(){" + code + "\n})();", { compress: true, mangle: true });
+  if (!r.code) die("terser returned no code.");
+  const js = r.code;
+  if (js.length < 1000) die("the generated JavaScript is suspiciously small (" + js.length + " chars).");
 
   // Parse-check the result before shipping it. new Function compiles without running.
   try {
@@ -125,8 +101,5 @@ const kb = (n) => (n / 1024).toFixed(1) + " KB";
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.writeFileSync(OUT, html);
-  console.log(
-    `index.html     ${kb(Buffer.byteLength(src))} -> dist/index.html ${kb(Buffer.byteLength(html))}` +
-      (light ? "  (minified only)" : "  (obfuscated)")
-  );
+  console.log(`index.html     ${kb(Buffer.byteLength(src))} -> dist/index.html ${kb(Buffer.byteLength(html))}`);
 })().catch((e) => die(e && e.stack ? e.stack : String(e)));

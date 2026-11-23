@@ -90,7 +90,7 @@ npm run build            → dist/index.html
 ```
 
 `build.js` finds the single inline `<script>`, replaces `let PUB=null;` with the data, wraps it in
-an IIFE, obfuscates or minifies, minifies the HTML, and verifies the result. It exits non-zero
+an IIFE, minifies it, minifies the HTML, and verifies the result. It exits non-zero
 with an explanation if any of those steps cannot be completed — see the README for the list.
 
 ## 7. Known constraints

@@ -25,9 +25,10 @@ names. The owner works in Spanish in conversation, but the repo is public-facing
 
 - **One file**: `index.html` (~213 KB, ~900 lines) with `<style>` and a single inline `<script>`.
   No framework, no modules, vanilla JS. Rendering is template strings assigned to `innerHTML`.
-- `build.js`: takes `index.html`, wraps the script in an IIFE, obfuscates it
-  (`javascript-obfuscator`) or merely minifies it (`--light`, terser), minifies the HTML and writes
-  `dist/index.html`. If `data.json` sits next to `build.js` it is embedded at the `let PUB=null;`
+- `build.js`: takes `index.html`, wraps the script in an IIFE, minifies it with terser, minifies
+  the HTML and writes `dist/index.html`. It used to offer an obfuscated mode as well; that was
+  dropped once the repo went public, where obfuscating a file whose source sits next to it buys
+  nothing and cost 2.7x the size plus 109 transitive dependencies. If `data.json` sits next to `build.js` it is embedded at the `let PUB=null;`
   anchor. **Every step fails loudly**: more than one inline `<script>`, a `data.json` that does not
   parse, a missing anchor, generated JS that does not parse, or built HTML that lost
   `<main id="app">` all exit non-zero with a message saying what to fix.
@@ -46,8 +47,7 @@ names. The owner works in Spanish in conversation, but the repo is public-facing
 
 ```
 npm install
-npm run build        # dist/index.html, obfuscated + minified
-npm run build:min    # dist/index.html, minified only (easier to debug)
+npm run build        # dist/index.html, minified
 npm test             # tests/run.js
 ```
 

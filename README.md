@@ -6,9 +6,9 @@ the menu with every ingredient, the service sequence, the table plan, the wine n
 trivia round that explains the reasoning behind every answer, and a short test for job candidates.
 
 <!-- TODO: add a screenshot, e.g. ![Team Academy](docs/screenshot.png) -->
-<!-- TODO: add the live demo link -->
 
-**Live demo:** _pending_ · pick any profile on the landing screen, no sign-in needed.
+**Live demo:** <https://fpradomacat.github.io/staff-trainer/> · pick any profile on the landing
+screen, no sign-in needed.
 
 ## What it does
 
@@ -43,9 +43,12 @@ reading it. Hence `npm test` and a build that refuses to publish anything it can
 ```bash
 npm install
 npm test             # tests/run.js — no dependencies needed for this one
-npm run build        # dist/index.html, obfuscated + minified
-npm run build:min    # dist/index.html, minified only (readable, for debugging)
+npm run build        # dist/index.html, minified
 ```
+
+Every push runs the tests and the build on CI; pushes to `master` publish `dist/` to GitHub Pages.
+See `.github/workflows/ci.yml`, which is commented for anyone meeting GitHub Actions for the first
+time.
 
 The build fails loudly rather than shipping something broken: it refuses to continue if there is
 more than one inline `<script>`, if `data.json` does not parse, if the injection point for that
@@ -61,9 +64,10 @@ that report success when storage rejected the write. No dependencies, runs in un
 
 ```
 index.html          the app
-build.js            bundler: embed content, minify or obfuscate, verify, write dist/
+build.js            bundler: embed content, minify, verify, write dist/
 tests/run.js        regression tests, no dependencies
 docs/               architecture notes and the improvement backlog
+.github/workflows/  CI: test, build, publish to Pages
 CLAUDE.md           working notes for AI-assisted sessions on this repo
 ```
 
