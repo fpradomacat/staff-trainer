@@ -17,6 +17,9 @@ screen, no sign-in needed.
   mise en place checklists per team, and tasting notes for the wines by the glass.
 - **Trivia.** 10-question rounds over 24 topics, scoped to the trainee's team. Every answer comes
   with the why, not just a right/wrong. Optional 20-second timer.
+- **Review queue.** A question you get wrong comes back until you get it right: a miss adds a
+  strike, a correct answer removes one, and at zero it leaves the queue. So two misses take two
+  correct answers to clear.
 - **Reports.** Rounds played, average, accuracy per topic, and the questions a trainee keeps
   getting wrong.
 - **Content editing.** A manager can edit the menu, the questions, the topics, the teams, the

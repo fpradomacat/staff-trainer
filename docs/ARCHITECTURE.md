@@ -14,10 +14,11 @@ One file, in this order:
 | Data | `/* ---------- DATA ... ---------- */` → `D` dishes, `S` pizza/sin pairs, `H` questions, `T` glossary, `O` offer rules, `K`/`MISE` mise en place, `FLOW` service steps, `FL` floor plan, `W` wines |
 | Engine | `/* ---------- Engine ---------- */` → `CATS` topics, helpers (`$`, `R`, `sh`, `pk`), `store`, sound, `gen(cat)` |
 | Navigation | `page`, `main`, `enter`, `go`, `tgl`, `landing`, `pick`, `resetDemo`, `seedDemo`, `home` |
+| Review queue | `/* ---------- Review queue ... ---------- */` → `revAll`, `revMine`, `revPool`, `revUpdate` |
 | Reference screens | `/* ---------- Reference ... ---------- */` → `REF`, `hl`, `refBar`, `myTeams`, `menu`, `words`, `service`, `wines`, and `guide` just above |
 | Model plumbing | `SEC`, `PROF` teams, `mig`, `PR` procedures, `getDB`/`setDB`/`SEED`/`SAVE_ERR`, `init`, `route` |
 | Candidate test | `cand`, `cstart`, `cshow`, `csel`, `cnext`, `cdone` |
-| Quiz | `start`, then `show`, `ans`, `end` at the end of the file, plus the timer (`tmStart`/`tmStop`) |
+| Quiz | `mkRound`, `start`, `startReview`, then `show`, `ans`, `end` at the end of the file, plus the timer (`tmStart`/`tmStop`) |
 | Admin | dish editor (`dishes`/`drows`/`dact`), question editor (`questions`/`qrows`/`qact`), generic table editor (`TC`/`table`/`trows`/`tact`), template (`tpl`/`tpact`), candidates, reports, `admin`/`adm` |
 
 ## 2. Data model
@@ -43,11 +44,16 @@ USERS   {username: {role, n, tm}}       // no passwords
 TPL[]   {c: topic, q: question text}    // references H by exact text
 W[]     [name, region, tasting notes, how to offer it, good for]
 stats[] {u, p, c, s, t, d, m: missed question texts}   // localStorage g250st
+                                                       // c is a topic id, or "review"
+revQueue {username: {question text: strikes 1..3}}     // localStorage g250rev
 CANDS[] {id, n, m, r, d, s, t, st, a}                  // localStorage g250cand
 ```
 
 Other `localStorage` keys: `g250timed`, `snd`, and the seed/migration flags `g250seed`,
-`g250cseed`, `g250hmig`.
+`g250cseed`, `g250hmig`, `g250revmig`.
+
+The review queue is keyed by question text, same as `TPL`. There is no repair pass for it: an
+edited question simply drops out of everybody's queue, which is the harmless failure mode.
 
 `TPL` resolves against `H` **by exact question text** (`tplQuestions`). The question editor
 handles renames: each row keeps its original wording in `q0` and `qact` rewrites matching `TPL`
@@ -70,7 +76,12 @@ to a finished trivia round and to a candidate submitting the test.
 2. `fin()` normalises answers: leading capital, pizzas get " pizza" and their sin in brackets.
 3. Shuffle the options, drop questions with duplicate options or no correct answer, cut to 10.
 
-`ans(k)` records the result and shows the explanation; `end()` appends to `stats`.
+`ans(k)` records the result into `hits` or `miss` and shows the explanation; `end()` appends to
+`stats` and calls `revUpdate()`, which applies the strikes.
+
+`startReview()` takes the same path through `mkRound`, but its raw list is `revPool()` — the
+user's queue, filtered to the current team's topics and ordered worst first — capped at the top 20
+before the round is shuffled and cut to 10.
 
 ## 5. Roles and navigation
 

@@ -43,11 +43,18 @@ saved and had lost it. Same family of bug as the ones fixed in phase 2: an opera
 and carries on. Fixed by returning a boolean from `store.set` and `save()` and gating every
 message on it.
 
-### 1.3 "Practise what I got wrong"  (effort: S, impact: high)  ← next
-`stats[].m` already stores up to 10 missed questions per round, and Reports already shows the
-most repeated ones. What is missing is the button that builds a round out of them. The biggest
-teaching improvement for the least effort: without it, somebody who keeps missing the same six
-questions keeps missing them.
+### 1.3 "Practise what I got wrong"  ✅ DONE (2026-11-23)
+`stats[].m` already stored up to 10 missed questions per round and Reports already showed the
+most repeated ones, but nothing built a round out of them: somebody who kept missing the same six
+questions kept missing them.
+
+Implemented as a strike queue rather than a flat list, because a review list that never shrinks
+feels broken. A miss adds a strike (max 3), a correct answer in any round removes one, and at zero
+the question leaves the queue, so two misses take two correct answers to clear. The queue is per
+user, scoped to that user's team topics, and ordered worst first. Review rounds are recorded under
+their own bucket so they do not drag down per-topic accuracy. A one-off migration seeds the queue
+from the rounds already on record — the five demo users came out with 20 to 38 questions each, so
+the feature has something to show the first time anyone opens it.
 
 ### 1.4 Repo README  ✅ DONE (2026-11-23)
 For the showcase goal, the front door is GitHub, not the app. Two TODOs left in it: a screenshot
@@ -112,6 +119,16 @@ Related: the strongest asset this project has for that goal is not a feature, it
 it. A reproducible build that fails loudly, a test suite that catches silent failures, documented
 architecture, a content backup. That is what separates this from a weekend project, and the README
 should lead with it.
+
+## What is next, in order
+
+All of tier 1 is done.
+
+1. **2.1 Regenerate the derived questions.** Unblocks editing the menu without the content going
+   inconsistent, and halves the file.
+2. **The decision about the global identifier names** (see the tension section above). Worth
+   taking before 2.1, so nothing gets renamed twice.
+3. **2.2 hash routing** and **2.3 PWA**, in either order.
 
 ## Deliberate omission worth revisiting
 

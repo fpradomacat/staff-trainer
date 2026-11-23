@@ -16,7 +16,10 @@ const EXPORTS = `
  get TPL(){return TPL}, set TPL(v){TPL=v},
  set user(v){user=v}, set cat(v){cat=v}, set prof(v){prof=v}, set tab(v){tab=v}, set nav(v){nav=v},
  get qs(){return qs}, set qs(v){qs=v}, set i(v){i=v}, set score(v){score=v},
- set miss(v){miss=v}, set cd(v){cd=v}, get qd(){return qd}, get rf(){return rf},
+ get miss(){return miss}, set miss(v){miss=v}, get hits(){return hits}, set hits(v){hits=v},
+ get rev(){return rev}, set rev(v){rev=v}, get stats(){return stats}, set stats(v){stats=v},
+ set cd(v){cd=v}, get qd(){return qd}, get rf(){return rf},
+ revPool, revUpdate, startReview, mkRound,
  ESC, fin, gen, defTpl, tplQuestions, questions, qact, dishes, dact,
  show, ans, end, cshow, cdone,
  admin, main, home, guide, reports, cand, landing, menu, menuRows, words, service, wines
@@ -218,6 +221,86 @@ test("when localStorage works, Admin confirms the save", () => {
   A.dishes();
   A.dact({ dataset: { d: "save" }, closest: () => null });
   ok(/^Saved \d+ dishes\./.test(A.text("#dmsg") || ""), "no confirmation: " + A.text("#dmsg"));
+});
+
+console.log("\nReview queue");
+const trainee = (A, tm) => { A.user = { u: "test", n: "Test", role: "user", tm: tm || "foh" }; A.prof = tm || "foh"; };
+const aQuestion = (A, topic) => { const h = A.H.find((x) => x[0] === (topic || "pizza")); return { q: h[1], a: h[2], w: [], e: h[4] }; };
+
+test("a missed question joins the queue and a correct answer clears it", () => {
+  const A = load();
+  trainee(A);
+  const q = aQuestion(A);
+  A.miss = [q]; A.hits = [];
+  A.revUpdate();
+  ok(A.revPool().some((x) => x.q === q.q), "the miss did not reach the queue");
+  A.miss = []; A.hits = [q];
+  A.revUpdate();
+  ok(!A.revPool().some((x) => x.q === q.q), "the correct answer did not clear it");
+});
+test("two misses take two correct answers to clear", () => {
+  const A = load();
+  trainee(A);
+  const q = aQuestion(A);
+  A.miss = [q]; A.hits = [];
+  A.revUpdate(); A.revUpdate();
+  A.miss = []; A.hits = [q];
+  A.revUpdate();
+  ok(A.revPool().some((x) => x.q === q.q), "one correct answer should not be enough after two misses");
+  const r = A.revUpdate();
+  ok(!A.revPool().some((x) => x.q === q.q), "the second correct answer did not clear it");
+  eq(r.cleared, 1, "the cleared count is wrong");
+});
+test("a review round only asks questions that are in the queue", () => {
+  const A = load();
+  trainee(A);
+  const picks = A.H.filter((x) => x[0] === "pizza").slice(0, 4);
+  A.miss = picks.map((h) => ({ q: h[1] })); A.hits = [];
+  A.revUpdate();
+  A.startReview();
+  ok(A.qs.length > 0, "the review round came out empty");
+  const inQueue = new Set(picks.map((h) => h[1]));
+  A.qs.forEach((x) => ok(inQueue.has(x.q), "the round asked something outside the queue: " + x.q));
+  ok(A.rev === true, "the round was not flagged as a review round");
+});
+test("the queue belongs to one user, not to the browser", () => {
+  const A = load();
+  trainee(A);
+  const q = aQuestion(A);
+  A.miss = [q]; A.hits = [];
+  A.revUpdate();
+  A.user = { u: "someone-else", n: "Other", role: "user", tm: "foh" };
+  eq(A.revPool().length, 0, "another user inherited the queue");
+});
+test("a bar trainee does not get another team's questions to review", () => {
+  const A = load();
+  trainee(A, "bar");
+  const q = aQuestion(A, "pizza");
+  A.miss = [q]; A.hits = [];
+  A.revUpdate();
+  eq(A.revPool().length, 0, "a pizza question showed up in a bar trainee's queue");
+});
+test("the topics screen offers the review button only when there is something to review", () => {
+  const A = load();
+  trainee(A);
+  A.home();
+  ok(/Nothing to review yet/.test(A.html), "it does not say the queue is empty");
+  ok(/id="rev" disabled/.test(A.html), "the button is not disabled on an empty queue");
+  A.miss = [aQuestion(A)]; A.hits = [];
+  A.revUpdate();
+  A.home();
+  ok(/Review my mistakes \(1\)/.test(A.html), "it does not show the count: " + (A.html.match(/id="rev"[^>]*>[^<]*/) || [""])[0]);
+});
+test("a review round is recorded in its own bucket, not against a topic", () => {
+  const A = load();
+  trainee(A);
+  A.stats = [];
+  A.rev = true;
+  A.qs = [{ q: "Q", a: "A", w: ["B"], e: "", o: ["A", "B"] }];
+  A.i = 0; A.score = 1; A.miss = []; A.hits = [];
+  A.end();
+  eq(A.stats.length, 1, "the round was not recorded");
+  eq(A.stats[0].c, "review", "the bucket is wrong");
 });
 
 console.log("\nCandidate test template");

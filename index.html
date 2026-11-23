@@ -74,7 +74,7 @@ textarea{min-height:52vh;resize:vertical}
 .opt.sel{border-color:#f2c14e;background:#fff7dc}
 .lbl{font-size:13px;color:#c9d6cc;border:1px solid #f6f2e744;border-radius:99px;padding:3px 10px}
 .pc#admin{border-color:#8a8a80}
-.go:disabled{opacity:.45;cursor:default}
+.go:disabled{opacity:.45;cursor:default}.ghost:disabled{opacity:.45;cursor:default}
 .pc,.sc,.rv,.fb,.q{box-shadow:0 1px 2px #0000000f,0 6px 18px #0000000a}
 #cv .ghost{max-width:260px}#cv .go{max-width:420px}
 #shell{display:flex;min-height:100vh}
@@ -356,7 +356,7 @@ const W=[["Cantina Del Garda Pinot Grigio D.O.C","Veneto, Italy","Clean, bone-dr
 let CATS={all:"Everything",pizza:"Pizza",pasta:"Pasta & Risotto",ante:"Starters",mains:"Mains & Sides",meat:"Meat or not?",dessert:"Desserts",offer:"What to offer",cheese:"Cheeses",ital:"Italian words",set:"Set menus",up:"Upgrades",gf:"Gluten free",kids:"Kids",flow:"Table service",map:"Tables & sections",dr:"Soft drinks",beer:"Beers",bar:"Cocktails",spritz:"Spritzes",wine:"Wines",wsell:"Wine cheatsheet",phr:"Menu cheatsheet",story:"Our story",mise:"Mise en place"};
 const $=s=>document.querySelector(s),R=a=>a[Math.random()*a.length|0],sh=a=>[...a].sort(()=>Math.random()-.5),pk=(a,n)=>sh(a).slice(0,n);
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}},del:k=>{try{localStorage.removeItem(k);return true}catch(e){return false}}};
-let cat="all",qs=[],i=0,score=0,streak=0,miss=[];
+let cat="all",qs=[],i=0,score=0,streak=0,miss=[],hits=[],rev=false;
 const root=$("#app");let app=root,user=null,nav="trivia";
 
 let AC,snd=store.get("snd")!="off";
@@ -445,12 +445,32 @@ function seedDemo(){
  stats.sort((x,y)=>x.d-y.d);store.set("g250st",JSON.stringify(stats));save();store.set("g250seed","1");
 }
 const bestOf=k=>Math.max(0,...stats.filter(x=>user&&x.u==user.u&&x.p==prof&&x.c==k).map(x=>x.s));
+/* ---------- Review queue: a question you miss comes back until you get it right ---------- */
+// Stored as {username: {question text: strikes}}. A miss adds a strike (max 3), a correct
+// answer in any round removes one, and at zero the question leaves the queue. Questions are
+// keyed by their text, same as the candidate test template, so an edited question simply
+// drops out of the queue rather than resolving to the wrong thing.
+const revAll=()=>{try{return JSON.parse(store.get("g250rev")||"{}")}catch(e){return{}}};
+const revMine=()=>(user?revAll()[user.u]||{}:{});
+const revPool=()=>{const m=revMine(),ts=tpcs(prof);
+ return H.filter(h=>m[h[1]]&&ts.includes(h[0])).sort((a,b)=>m[b[1]]-m[a[1]])
+  .map(h=>({q:h[1],a:h[2],w:h[3].split("|").filter(Boolean),e:h[4]}))};
+function revUpdate(){
+ if(!user)return{ok:true,cleared:0};
+ const all=revAll(),m=all[user.u]||{};let cleared=0;
+ miss.forEach(q=>{m[q.q]=Math.min(3,(m[q.q]||0)+1)});
+ hits.forEach(q=>{if(m[q.q]){m[q.q]--;if(m[q.q]<=0){delete m[q.q];cleared++}}});
+ all[user.u]=m;
+ return{ok:store.set("g250rev",JSON.stringify(all)),cleared};
+}
 function home(){
- if(!PROF[prof])prof=Object.keys(PROF)[0];const P=PROF[prof];
+ if(!PROF[prof])prof=Object.keys(PROF)[0];const P=PROF[prof],nr=revPool().length;
  app.innerHTML=`<div class="top"><button class="x" id="main" aria-label="Back to teams">&#8592;</button><h2 class="t" style="margin:0">${ESC(P.n)}</h2></div>
  <p class="sub">Choose a topic and answer 10 questions. Every answer comes with the why.</p>
  <div class="chips">${["all",...tpcs(prof)].map(k=>`<button class="chip${k==cat?" on":""}" data-c="${k}">${ESC(CATS[k])}${bestOf(k)?` <small>best ${bestOf(k)}</small>`:""}</button>`).join("")}</div>
- <button class="go" id="go">Start quiz</button><button class="ghost" id="tmt">Timed mode: ${timed()?"on ("+TLIM_QUIZ+" seconds per question)":"off"}</button>`;
+ <button class="go" id="go">Start quiz</button>
+ <button class="ghost" id="rev"${nr?"":" disabled"}>${nr?`Review my mistakes (${nr})`:"Nothing to review yet"}</button>
+ <button class="ghost" id="tmt">Timed mode: ${timed()?"on ("+TLIM_QUIZ+" seconds per question)":"off"}</button>`;
 }
 function guide(){
  const sc=Object.keys(FL),own=t=>sc.filter(c=>FL[c].some(x=>x[0]==t));
@@ -533,6 +553,11 @@ async function init(){
  try{if(!store.get("g250hmig")){const have=new Set(H.map(h=>h[1])),miss2=JSON.parse(SEED).H.filter(h=>!have.has(h[1]));if(miss2.length){H=[...H,...miss2];save()}store.set("g250hmig","1")}}catch(e){}
  if(!store.get("g250seed"))seedDemo();
  try{let ch=0;Object.entries(DEMO).forEach(([u,[n,team]])=>{if(USERS[u]&&USERS[u].tm==null&&team!="all"){USERS[u].tm=team;ch=1}});if(ch)save()}catch(e){}
+ // One-off: seed the review queue from the rounds already on record, so the feature is
+ // useful on first sight instead of after the next round.
+ if(!store.get("g250revmig")){try{const all=revAll();
+  stats.forEach(x=>{const m=all[x.u]=all[x.u]||{};(x.m||[]).forEach(q=>{m[q]=Math.min(3,(m[q]||0)+1)})});
+  store.set("g250rev",JSON.stringify(all))}catch(e){}store.set("g250revmig","1")}
  if(!store.get("g250cseed"))seedCands();
  addEventListener("hashchange",route);
  route();
@@ -578,11 +603,21 @@ function cdone(){
  ${adm?`<div class="rv"><b>Result (visible to admins only)</b><span>${sc} / ${cd.q.length}</span><small>${ESC(cd.n)}, ${ESC(cd.m)}, ${ESC(posN(cd.r))}</small></div>`+cd.q.map((q,k)=>{const ok=q.o[cd.ans[k]]==q.a;return `<div class="rv"><b>${ok?"Correct":"Wrong"}: ${ESC(q.q)}</b><span>${ESC(q.a)}</span>${ok?"":`<small>Their answer: ${ESC(q.o[cd.ans[k]]??"No answer (time ran out)")}</small>`}</div>`}).join(""):""}`;
  scrollTo(0,0);
 }
+// Shuffles, normalises the answers and drops anything the quiz cannot ask (duplicate
+// options, or no correct answer among them). Shared by a normal round and a review round.
+const mkRound=raw=>sh(raw).map(fin).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))}))
+ .filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,10);
 function start(){
- const raw=cat=="all"?tpcs(prof).flatMap(t=>pk(gen(t),3)):gen(cat);
- qs=sh(raw).map(fin).map(q=>({...q,o:sh([q.a,...q.w].filter(Boolean))})).filter(q=>q.o.length>1&&new Set(q.o).size==q.o.length&&q.o.includes(q.a)).slice(0,10);
+ qs=mkRound(cat=="all"?tpcs(prof).flatMap(t=>pk(gen(t),3)):gen(cat));
  if(!qs.length){alert("No questions for this topic yet. Add some in Admin.");return}
- i=score=streak=0;miss=[];show()}
+ rev=false;i=score=streak=0;miss=[];hits=[];show()}
+function startReview(){
+ const pool=revPool();
+ if(!pool.length){alert("Nothing to review yet. Play a round and the questions you miss will land here.");return}
+ // Worst first, then shuffled inside the round so the order is not predictable.
+ qs=mkRound(pool.slice(0,20));
+ if(!qs.length)return;
+ rev=true;i=score=streak=0;miss=[];hits=[];show()}
 
 /* ---------- Admin: edits are stored in this browser; export data.json to publish ---------- */
 let tab="q";
@@ -856,6 +891,8 @@ function cview(){
 }
 /* ---------- Reports (stats are stored in this browser) ---------- */
 let stats=[],rp={u:"",f:""};
+// Review rounds are recorded under their own bucket, so they get their own label.
+const topicName=c=>CATS[c]||(c=="review"?"Review":c);
 const pct=(a,b)=>b?Math.round(a/b*100):0,pbar=p=>`<div class="pb"><i style="width:${p}%"></i></div>`,
  fd=t=>t?new Date(t).toLocaleString([],{dateStyle:"medium",timeStyle:"short"}):"-";
 function summ(R){const t=R.reduce((a,x)=>a+x.t,0),s=R.reduce((a,x)=>a+x.s,0);return{r:R.length,t,p:pct(s,t),best:R.length?Math.max(...R.map(x=>pct(x.s,x.t))):0,last:R.length?Math.max(...R.map(x=>x.d)):0}}
@@ -872,13 +909,13 @@ function rlist(){
 }
 function rview(u){
  const R=stats.filter(x=>x.u==u).sort((a,b)=>b.d-a.d),S=summ(R),a=USERS[u]||{n:u},bt={},ms={};
- R.forEach(x=>{const k=CATS[x.c]||x.c;bt[k]=bt[k]||{s:0,t:0,n:0};bt[k].s+=x.s;bt[k].t+=x.t;bt[k].n++;(x.m||[]).forEach(q=>ms[q]=(ms[q]||0)+1)});
+ R.forEach(x=>{const k=topicName(x.c);bt[k]=bt[k]||{s:0,t:0,n:0};bt[k].s+=x.s;bt[k].t+=x.t;bt[k].n++;(x.m||[]).forEach(q=>ms[q]=(ms[q]||0)+1)});
  const top=Object.entries(ms).sort((p,q)=>q[1]-p[1]).slice(0,5);
  app.innerHTML=`<div class="top">${user.role=="admin"?`<button class="x" data-r="" aria-label="Back to users">&#8592;</button>`:""}<h2 class="t" style="margin:0">${ESC(a.n)}</h2></div>
  <div class="kp"><div><b>${S.r}</b><span>Rounds played</span></div><div><b>${S.p}%</b><span>Average score</span></div><div><b>${S.best}%</b><span>Best round</span></div><div><b>${S.t}</b><span>Questions answered</span></div></div>`+
  (S.r?`<h3 class="t">By topic</h3><div class="tw"><table class="dt gt"><thead><tr><th>Topic</th><th>Rounds</th><th>Accuracy</th></tr></thead><tbody>${Object.entries(bt).sort((x,y)=>pct(x[1].s,x[1].t)-pct(y[1].s,y[1].t)).map(([k,v])=>`<tr><td>${ESC(k)}</td><td>${v.n}</td><td>${pct(v.s,v.t)}% ${pbar(pct(v.s,v.t))}</td></tr>`).join("")}</tbody></table></div>
  <h3 class="t">Most missed questions</h3>${top.length?`<div class="tw"><table class="dt gt"><tbody>${top.map(([q,n])=>`<tr><td>${ESC(q)}</td><td style="width:90px">${n} time${n>1?"s":""}</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No missed questions. Great work!</p>`}
- <h3 class="t">Recent rounds</h3><div class="tw"><table class="dt gt"><thead><tr><th>Date</th><th>Team</th><th>Topic</th><th>Score</th></tr></thead><tbody>${R.slice(0,15).map(x=>`<tr><td>${fd(x.d)}</td><td>${ESC((PROF[x.p]||{}).n||x.p)}</td><td>${ESC(CATS[x.c]||x.c)}</td><td>${x.s}/${x.t} (${pct(x.s,x.t)}%)</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No rounds yet. Play a trivia round to see stats here.</p>`);
+ <h3 class="t">Recent rounds</h3><div class="tw"><table class="dt gt"><thead><tr><th>Date</th><th>Team</th><th>Topic</th><th>Score</th></tr></thead><tbody>${R.slice(0,15).map(x=>`<tr><td>${fd(x.d)}</td><td>${ESC((PROF[x.p]||{}).n||x.p)}</td><td>${ESC(topicName(x.c))}</td><td>${x.s}/${x.t} (${pct(x.s,x.t)}%)</td></tr>`).join("")}</tbody></table></div>`:`<p class="sub">No rounds yet. Play a trivia round to see stats here.</p>`);
 }
 function admin(){
  if(!user||user.role!="admin")return;
@@ -928,24 +965,26 @@ function ans(k){
  const q=qs[i];if(q.done)return;q.done=1;tmStop();
  const ok=q.o[k]==q.a;beep(ok);
  document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(q.o[j]==q.a)b.classList.add("ok");else if(j==k)b.classList.add("bad")});
- if(ok){score++;streak++}else{streak=0;miss.push(q)}
+ if(ok){score++;streak++;hits.push(q)}else{streak=0;miss.push(q)}
  $("#fb").innerHTML=`<div class="fb ${ok?"ok":"bad"}"><b>${ok?R(["Perfetto!","Bravo!","Esatto!","Delizioso!"]):k<0?"Time is up!":"Not quite."}</b><p>${ok?"":`The answer is ${ESC(q.a)}. `}${ESC(q.e)}</p></div><button class="go" id="nx">${i+1<qs.length?"Next question":"See results"}</button>`;
  $("#nx").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function end(){
  tmStop();
+ const rq=revUpdate(),bucket=rev?"review":cat,left=revPool().length;
  let okR=true;
- if(user){stats.push({u:user.u,p:prof,c:cat,s:score,t:qs.length,d:Date.now(),m:miss.slice(0,10).map(q=>q.q)});okR=store.set("g250st",JSON.stringify(stats))}
- const p=score/qs.length,b=Math.max(0,...stats.slice(0,-1).filter(x=>x.u==user.u&&x.p==prof&&x.c==cat).map(x=>x.s));
+ if(user){stats.push({u:user.u,p:prof,c:bucket,s:score,t:qs.length,d:Date.now(),m:miss.slice(0,10).map(q=>q.q)});okR=store.set("g250st",JSON.stringify(stats))}
+ const p=score/qs.length,b=Math.max(0,...stats.slice(0,-1).filter(x=>x.u==user.u&&x.p==prof&&x.c==bucket).map(x=>x.s));
  app.innerHTML=`<div class="res"><div class="big">${p==1?"&#127942;":p>=.7?"&#127837;":p>=.4?"&#127829;":"&#128214;"}</div><h2 class="t">${score} / ${qs.length}</h2>
  <p class="sub">${p==1?"Perfetto! You know this one cold.":p>=.7?"Great round. Almost there.":p>=.4?"Good start. Review and go again.":"Keep studying. It gets easier."}${score>b&&b?" New personal best!":""}</p>
  ${okR?"":`<p class="sub err">This round could not be saved to this browser's storage, so it will not show up in Reports.</p>`}
+ ${rq.cleared?`<p class="sub">${rq.cleared} question${rq.cleared>1?"s":""} left your review list.${left?` ${left} to go.`:" It is empty now."}</p>`:""}
  ${miss.length?`<h3 class="t">Review</h3>`+miss.map(q=>`<div class="rv"><b>${ESC(q.q)}</b><span>${ESC(q.a)}</span><small>${ESC(q.e)}</small></div>`).join(""):""}
- <button class="go" id="go">Play again</button><button class="ghost" id="home">Back to topics</button></div>`;
+ <button class="go" id="${rev?"rev":"go"}">Play again</button><button class="ghost" id="home">Back to topics</button></div>`;
  scrollTo(0,0);
 }
 root.onclick=e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id=="go")start();else if(b.id=="tmt"){store.set("g250timed",timed()?"0":"1");home()}else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.dataset.pu)pick(b.dataset.pu);else if(b.id=="reset")resetDemo();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;landing()},800)}else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.dataset.qa)qact(b);else if(b.dataset.ta)tact(b);else if(b.dataset.tpa)tpact(b);else if(b.dataset.cv!=null){cf.v=b.dataset.cv||null;cands()}else if(b.dataset.cx){if(confirm("Delete this candidate?")){CANDS=CANDS.filter(x=>x.id!=b.dataset.cx);store.set("g250cand",JSON.stringify(CANDS));cands()}}else if(b.dataset.r!=null){rp.u=b.dataset.r;reports()}else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
+ if(b.id=="go")start();else if(b.id=="rev")startReview();else if(b.id=="tmt"){store.set("g250timed",timed()?"0":"1");home()}else if(b.id=="guide")guide();else if(b.id=="main")main();else if(b.id=="admin")admin();else if(b.dataset.pu)pick(b.dataset.pu);else if(b.id=="reset")resetDemo();else if(b.id=="logout"){b.disabled=true;b.querySelector("span").textContent="Signing out...";setTimeout(()=>{user=null;landing()},800)}else if(b.dataset.n)go(b.dataset.n);else if(b.id=="tg")tgl();else if(b.id=="sbk")$("#shell").classList.remove("open");else if(b.id=="cstart")cstart();else if(b.id=="cnext")cnext();else if(b.dataset.ck!=null)csel(+b.dataset.ck);else if(b.dataset.p){prof=b.dataset.p;cat="all";home()}else if(b.dataset.a)adm(b);else if(b.dataset.d)dact(b);else if(b.dataset.qa)qact(b);else if(b.dataset.ta)tact(b);else if(b.dataset.tpa)tpact(b);else if(b.dataset.cv!=null){cf.v=b.dataset.cv||null;cands()}else if(b.dataset.cx){if(confirm("Delete this candidate?")){CANDS=CANDS.filter(x=>x.id!=b.dataset.cx);store.set("g250cand",JSON.stringify(CANDS));cands()}}else if(b.dataset.r!=null){rp.u=b.dataset.r;reports()}else if(b.id=="snd"){snd=!snd;store.set("snd",snd?"on":"off");beep(1);b.querySelector("span").textContent="Sound: "+(snd?"on":"off")}else if(b.id=="home")home();else if(b.id=="nx"){i++;i<qs.length?show():end()}
  else if(b.dataset.c){cat=b.dataset.c;home()}else if(b.dataset.k)ans(+b.dataset.k);else if(b.classList.contains("opt"))ans(0)};
 document.onkeydown=e=>{
  if(e.key=="Enter"&&e.target.dataset&&e.target.dataset.ing!=null){e.preventDefault();const bb=e.target.closest("tr").querySelector('[data-d="iadd"]');bb&&bb.click()}

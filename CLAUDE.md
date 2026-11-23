@@ -70,8 +70,9 @@ blob in `localStorage["g250db"]`:
 | `USERS` | Users, role (`admin` / `user`) and team. No passwords |
 | `TPL`, `TPS` | Candidate test template |
 
-Other `localStorage` keys: `g250st` (round stats), `g250cand` (candidates), `g250timed`, `snd`,
-and the seed/migration flags (`g250seed`, `g250cseed`, `g250hmig`).
+Other `localStorage` keys: `g250st` (round stats), `g250rev` (review queue), `g250cand`
+(candidates), `g250timed`, `snd`, and the seed/migration flags (`g250seed`, `g250cseed`,
+`g250hmig`, `g250revmig`).
 
 Startup: `init()` → load `PUB` (embedded or `data.json`) → override with `localStorage` if there
 are local edits → seed demo data on first run → `route()` (`#/test` is the candidate test,
@@ -87,6 +88,12 @@ otherwise the landing screen).
 - **Trivia**: pick a team → a topic (or "Everything") → 10 questions → feedback with the why →
   result and a review of what was missed. Optional 20-second timer. Options are shuffled in
   `start()`.
+- **Review queue**: a question you miss comes back until you get it right. Stored in
+  `localStorage["g250rev"]` as `{username: {question text: strikes}}` — a miss adds a strike (max
+  3), a correct answer in any round removes one, and at zero the question leaves the queue.
+  `revPool()` is the queue filtered to the current team's topics, worst first; `startReview()`
+  builds a round from it. Review rounds are recorded under the bucket `"review"` instead of a
+  topic, so they do not distort per-topic accuracy.
 - **Reports**: per user (rounds, average, best round, weakest topics, most missed questions).
   Admins see everyone.
 - **Admin** (admin role only): Questions, Topics, Teams, Procedures, Dishes, Floor, Dictionary,
@@ -158,7 +165,13 @@ Each one was reproduced before being touched and has its test in `tests/run.js`.
 3. **Profile picker and landing screen.** Replaces the form with simulated credentials. Explains
    what the app is, that it is a serverless demo, and that changes stay in the browser. Includes a
    restore-demo button.
-4. **README.** Screenshot and live demo link still missing.
+4. **README.** Screenshot still missing.
+5. **Review queue** (1.3). The data was already there — `stats[].m` recorded every missed question
+   — but nothing used it. A one-off migration seeds the queue from the rounds already on record, so
+   the feature is useful on first sight rather than after the next round.
+6. **Dropped the obfuscated build** and added CI plus GitHub Pages deployment. Obfuscating a file
+   whose source sits next to it in a public repo buys nothing, and it cost 2.7x the size and 109
+   transitive dependencies.
 
 ## Outstanding technical debt
 
@@ -181,8 +194,7 @@ Each one was reproduced before being touched and has its test in `tests/run.js`.
 3. Analyse and prioritise improvements ✅ (`docs/IMPROVEMENTS.md`)
 4. Implement the chosen improvements ← in progress: 1.1, 1.2, 1.4 and 1.5 done
 
-Next up is 1.3 (practise what I got wrong), and then 2.1 (regenerate the derived questions). The
-decision about renaming the global identifiers should be taken before 2.1, so nothing is renamed
-twice.
+Next up is 2.1 (regenerate the derived questions). The decision about renaming the global
+identifiers should be taken before it, so nothing is renamed twice.
 
 Keep this file current when the structure, the commands or the data model change.
